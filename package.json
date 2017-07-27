@@ -1,0 +1,38 @@
+{
+  "name": "x-realtime-nodejs",
+  "version": "0.0.1",
+  "description": "mock wechat server",
+  "main": "app.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wujun4code/x-realtime-nodejs.git"
+  },
+  "engines": {
+    "node": "6.x"
+  },
+  "keywords": [
+    "wechat",
+    "socketio",
+    "realtime"
+  ],
+  "author": "WuJun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wujun4code/x-realtime-nodejs/issues"
+  },
+  "homepage": "https://github.com/wujun4code/x-realtime-nodejs#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "leancloud-storage": "^3.0.2",
+    "leanengine": "^3.0.0",
+    "rx-lean-js-core": "^0.4.8",
+    "rxjs": "^5.4.2",
+    "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "mocha": "^3.4.2",
+    "socket.io-client": "^2.0.3"
+  }
+}
