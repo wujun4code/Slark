@@ -20,13 +20,15 @@ describe('message', () => {
                 socketId: socketId
             }, data => {
                 console.log(data);
+                let sessionToken = data.body.sessionToken;
                 socket.emit('message/direct', {
-                    userId: userId,
+                    sessionToken: sessionToken,
                     targetIds: ['weichi'],
                     type: 'text',
-                    content: '你是猴子么？',
+                    textContent: '你是猴子么？',
                 }, data => {
-                    console.log('message sent', data);
+                    console.log('message sent', JSON.stringify(data));
+
                     done();
                 });
             });

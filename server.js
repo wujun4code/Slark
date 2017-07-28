@@ -1,7 +1,7 @@
 'use strict';
 var AV = require('leanengine');
 var rxjs = require('rxjs');
-var xConnection = require('./connect');
+var xRealtime = require('./xRealtime');
 var RxAVClient = require('rx-lean-js-core').RxAVClient;
 var RxAVApp = require('rx-lean-js-core').RxAVApp;
 
@@ -37,8 +37,8 @@ var io = require('socket.io')(server, {
 //         console.log(data);
 //     });
 // });
-var connection = new xConnection(io);
-connection.start();
+var xr = new xRealtime(io);
+xr.start();
 
 
 server.listen(PORT, function () {
