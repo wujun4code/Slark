@@ -3,7 +3,7 @@ var io = require('socket.io-client');
 
 describe('connect', () => {
     it('logIn', done => {
-        let socket = io('http://localhost:3000', {
+        let socket = io('http://xrealtime.leanapp.cn', {
             path: '/wechat'
         });
         socket.connect();

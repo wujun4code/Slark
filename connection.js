@@ -29,7 +29,6 @@ class xConnectionService {
                 let socketId = data.socketId;
                 let sessionToken = utils.newToken();
 
-                
                 messageService.start(result);
 
                 this.tokens.set(sessionToken, {
@@ -46,37 +45,7 @@ class xConnectionService {
                     }
                 });
             });
-        })
-
-
-
-        // this.rxConnection.subscribe(socket => {
-        //     socket.emit('connected', {
-        //         socketId: socket.id
-        //     });
-
-        //     let rxDisconnect = new rxjs.Observable(observer => {
-        //         socket.on('disconnecting', reason => {
-        //             // let rooms = Object.keys(socket.rooms);
-        //             observer.next({
-        //                 socketId: socket.id,
-        //                 reason: reason
-        //             });
-        //         });
-        //     });
-
-        //     rxDisconnect.subscribe(disconnectData => {
-        //         let socketId = disconnectData.socketId;
-        //         console.log('disconnected', socketId);
-        //     });
-        // });
-
-        // this.startLogIn();
-
-        // this.rxLogIn.subscribe(logInData => {
-
-        // });
-
+        });
     }
 
     startConnection() {

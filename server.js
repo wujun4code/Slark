@@ -30,13 +30,6 @@ var io = require('socket.io')(server, {
     path: '/wechat'
 });
 
-// io.on('connection', function (socket) {
-//     console.log('connection comes.');
-//     socket.emit('news', { hello: 'world' });
-//     socket.on('my other event', function (data) {
-//         console.log(data);
-//     });
-// });
 var xr = new xRealtime(io);
 xr.start();
 

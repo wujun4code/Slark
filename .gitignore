@@ -5,6 +5,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+.DS_Store
+.avoscloud/
+.leancloud/
+
 # Runtime data
 pids
 *.pid

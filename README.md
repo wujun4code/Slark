@@ -83,7 +83,8 @@ socket.emit('message/conversation', {
 
 ### 创建对话
 
-#### sokcet 协议
+#### ~~sokcet 协议~~ （暂未实现） 
+
 ```js
 socket.emit('conversation/add', {
     sessionToken:'6e5003c1bcb61ada8483655292918095',// 登录操作返回的 sessionToken
@@ -107,11 +108,19 @@ socket.emit('conversation/add', {
 #### http(s) 协议
 
 ```js
-let conversation = new xConversation();
-conversation.protected = ['name','members','admin'];
-conversation.admin = ['xyz','abc'];
-conversation.members = ['uyi','lkl'];
-conversation.name = '吃货小分队';
-conversation.set('atr1',value);
-conversation.save();
+let u = undefined;
+RxAVUser.logIn('junwu', 'leancloud').flatMap(user => {
+    u = user;
+    let newGroup = new RxAVObject(groupSrc.groupProperties.className);
+    newGroup.set('name', 'mochaTest');
+    return newGroup.save();
+}).flatMap(groupObj => {
+    let user_group = new RxAVObject(groupSrc.userGroupRelationProperties.className);
+    user_group.set(groupSrc.userGroupRelationProperties.user, u);
+    user_group.set(groupSrc.userGroupRelationProperties.group, groupObj);
+    return user_group.save();
+}).subscribe(joined => {
+    console.log('joined', joined);
+});
+
 ```
