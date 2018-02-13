@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Slark.Server.Core
 {
-    interface TypedConnection
+    interface SlackConnection
     {
 
     }
