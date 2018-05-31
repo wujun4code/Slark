@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.WebSockets.Server" Version="0.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Slark.Core\Slark.Core.csproj" />
+    <ProjectReference Include="..\Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.ProtocolAdapter.LeanCloudPlay.csproj" />
+    <ProjectReference Include="..\Slark.Server.WebSoket\Slark.Server.WebSoket.csproj" />
+  </ItemGroup>
+
+</Project>

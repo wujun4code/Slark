@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Slark.ClassesDefinition
+namespace Slark.Core
 {
     public static class SlarkExtensions
     {

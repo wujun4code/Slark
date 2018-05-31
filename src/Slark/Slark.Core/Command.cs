@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Slark.ClassesDefinition
+namespace Slark.Core
 {
     public class SlarkCommand
     {

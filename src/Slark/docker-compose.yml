@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  slark.server.aspnetcore:
+    image: ${DOCKER_REGISTRY}slarkserveraspnetcore
+    build:
+      context: .
+      dockerfile: Slark.Server.ASPNETCore/Dockerfile

@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.ClassesDefinition", "Slark.ClassesDefinition\Slark.ClassesDefinition.csproj", "{6DC27A8F-0D81-4FB1-BE23-02E4BB505AC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slark.Core", "Slark.Core\Slark.Core.csproj", "{6DC27A8F-0D81-4FB1-BE23-02E4BB505AC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server", "Slark.Server\Slark.Server.csproj", "{C7FB6B39-F2C1-4382-935D-5196E7827074}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slark.Server.WebSoket", "Slark.Server.WebSoket\Slark.Server.WebSoket.csproj", "{36F92C20-5895-4437-B068-D91CB0E367FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server.ConsoleApp", "Slark.Server.ConsoleApp\Slark.Server.ConsoleApp.csproj", "{470BF14E-7260-4B4A-90BE-E659AA3D0041}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slark.Server.ConsoleApp.NETCore", "Slark.Server.ConsoleApp.NETCore\Slark.Server.ConsoleApp.NETCore.csproj", "{146222F4-92A2-46AA-8776-E259A38AEFEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server.ProtocolAdapter.LeanCloudPlay", "Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.ProtocolAdapter.LeanCloudPlay.csproj", "{10F0C400-525D-44BD-8901-69D45D192347}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +23,22 @@ Global
 		{6DC27A8F-0D81-4FB1-BE23-02E4BB505AC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DC27A8F-0D81-4FB1-BE23-02E4BB505AC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DC27A8F-0D81-4FB1-BE23-02E4BB505AC8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7FB6B39-F2C1-4382-935D-5196E7827074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7FB6B39-F2C1-4382-935D-5196E7827074}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7FB6B39-F2C1-4382-935D-5196E7827074}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7FB6B39-F2C1-4382-935D-5196E7827074}.Release|Any CPU.Build.0 = Release|Any CPU
-		{470BF14E-7260-4B4A-90BE-E659AA3D0041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{470BF14E-7260-4B4A-90BE-E659AA3D0041}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{470BF14E-7260-4B4A-90BE-E659AA3D0041}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{470BF14E-7260-4B4A-90BE-E659AA3D0041}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36F92C20-5895-4437-B068-D91CB0E367FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36F92C20-5895-4437-B068-D91CB0E367FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36F92C20-5895-4437-B068-D91CB0E367FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36F92C20-5895-4437-B068-D91CB0E367FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{146222F4-92A2-46AA-8776-E259A38AEFEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{146222F4-92A2-46AA-8776-E259A38AEFEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{146222F4-92A2-46AA-8776-E259A38AEFEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{146222F4-92A2-46AA-8776-E259A38AEFEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10F0C400-525D-44BD-8901-69D45D192347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10F0C400-525D-44BD-8901-69D45D192347}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10F0C400-525D-44BD-8901-69D45D192347}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10F0C400-525D-44BD-8901-69D45D192347}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
