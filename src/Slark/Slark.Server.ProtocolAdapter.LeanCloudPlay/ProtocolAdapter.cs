@@ -8,9 +8,6 @@ namespace Slark.Server.ProtocolAdapter.LeanCloudPlay
 {
     public class PlayProtocolAdapter
     {
-        public Task OnAttached(SlarkClientConnection slarkClientConnection)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
