@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Slark.Core\Slark.Core.csproj" />
-    <ProjectReference Include="..\Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.ProtocolAdapter.LeanCloudPlay.csproj" />
+    <ProjectReference Include="..\Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.LeanCloud.Play.csproj" />
     <ProjectReference Include="..\Slark.Server.WebSoket\Slark.Server.WebSoket.csproj" />
   </ItemGroup>
 

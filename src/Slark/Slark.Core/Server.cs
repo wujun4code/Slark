@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace Slark.Core
 {
@@ -9,11 +11,21 @@ namespace Slark.Core
     {
         public SlarkServer()
         {
-            ProtocolAdapter = new EchoProtocolAdapter();
-            Connections = new List<SlarkClientConnection>();
-        }
-        public ISlarkProtocolAdapter ProtocolAdapter { get; set; }
 
-        public List<SlarkClientConnection> Connections { get; set; }
+        }
+
+        public abstract Task OnConnected(SlarkClientConnection slarkClientConnection);
+
+        public abstract Task OnReceived(SlarkClientConnection slarkClientConnection, string message);
+
+        public abstract Task OnDisconnected(SlarkClientConnection slarkClientConnection);
+
+        public abstract List<SlarkClientConnection> Connections { get; set; }
+
+        public virtual Task Broadcast(string message)
+        {
+            var sendTasks = Connections.Select(connection => connection.SendAsync(message));
+            return Task.WhenAll(sendTasks);
+        }
     }
 }

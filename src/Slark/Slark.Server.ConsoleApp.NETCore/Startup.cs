@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Slark.Core;
 using System;
 using System.Net.WebSockets;
 using System.Threading;
@@ -31,8 +32,8 @@ namespace Slark.Server.ConsoleApp.NETCore
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseSlarkWebSokcetServer(new Slark.Server.WebSoket.SlarkWebSokcetServer());
+            var SlarkWebSokcetServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new LeanCloud.Play.PlayServer());
+            app.UseSlarkWebSokcetServer(SlarkWebSokcetServer);
         }
 
         private async Task Echo(HttpContext context, WebSocket webSocket)
