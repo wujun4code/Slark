@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Slark.Core
 {
-    public class SlarkStandardServer : SlarkServer
+    public abstract class SlarkStandardServer : SlarkServer
     {
         public SlarkStandardServer()
         {
@@ -20,6 +20,7 @@ namespace Slark.Core
 
         public override Task OnConnected(SlarkClientConnection slarkClientConnection)
         {
+            slarkClientConnection.Client = new SlarkStandardClient();
             return Task.FromResult(true);
         }
 
@@ -32,5 +33,7 @@ namespace Slark.Core
         {
             await this.Broadcast(message);
         }
+
+        public abstract override Task<string> OnRequest(string route, string message);
     }
 }

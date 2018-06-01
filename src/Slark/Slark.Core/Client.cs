@@ -4,8 +4,12 @@ using System.Text;
 
 namespace Slark.Core
 {
-    public class SlarkClient
+    public abstract class SlarkClient
     {
-        public Guid ServerSetId { get; set; }
+        public SlarkClient()
+        {
+
+        }
+        public SlarkToken Token { get; set; }
     }
 }

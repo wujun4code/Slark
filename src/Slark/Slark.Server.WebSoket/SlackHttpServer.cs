@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Slark.Core
+namespace Slark.Server.WebSoket
 {
-    public class SlarkLoadBalanceConnection
+    public class SlackHttpServer
     {
 
     }

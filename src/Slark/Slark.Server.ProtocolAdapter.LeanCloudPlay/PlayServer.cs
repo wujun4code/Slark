@@ -6,33 +6,51 @@ using System.Threading.Tasks;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class PlayServer : SlarkServer
+    public class PlayServer : SlarkStandardServer
     {
+        public IDictionary<string, IPlayRouteHandler> RouterHandlers { get; set; }
+        public IDictionary<string, IPlayCommandHandler> CommandHandlers { get; set; }
+
         public PlayServer()
         {
-            Connections = new List<SlarkClientConnection>();
+            RouterHandlers = new Dictionary<string, IPlayRouteHandler>();
+            AddRouteHandler(new LobbyRouterHandler());
+
+            CommandHandlers = new Dictionary<string, IPlayCommandHandler>();
         }
 
-        public override List<SlarkClientConnection> Connections
+        public void AddRouteHandler(IPlayRouteHandler playRouteHandler)
         {
-            get;
-            set;
+            RouterHandlers.Add(playRouteHandler.Router, playRouteHandler);
         }
 
-        public override Task OnConnected(SlarkClientConnection slarkClientConnection)
+        public void AddCommandHandler(IPlayCommandHandler playCommandHandler)
         {
-            return Task.FromResult(true);
-        }
-
-        public override Task OnDisconnected(SlarkClientConnection slarkClientConnection)
-        {
-            return Task.FromResult(false);
+            CommandHandlers.Add(playCommandHandler.Command + "-" + playCommandHandler.Operation, playCommandHandler);
         }
 
         public override async Task OnReceived(SlarkClientConnection slarkClientConnection, string message)
         {
-            await this.Broadcast(message);
-            //await slarkClientConnection.SendAsync(message);
+            var request = new PlayRequest(message);
+            var context = new PlayContext()
+            {
+                Request = request,
+                Response = new PlayResponse()
+            };
+            if (CommandHandlers.ContainsKey(request.CommandHandlerKey))
+            {
+                await CommandHandlers[request.CommandHandlerKey].ExecuteAsync(context);
+                await slarkClientConnection.SendAsync(context.Response.Body.ToJsonString());
+            }
+        }
+
+        public override Task<string> OnRequest(string route, string message)
+        {
+            if (RouterHandlers.ContainsKey(route))
+            {
+                return RouterHandlers[route].Response(message);
+            }
+            return Task.FromResult(message);
         }
     }
 }

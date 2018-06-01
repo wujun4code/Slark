@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Slark.Core
 {
-    public class SlarkNotice
+    public class SlarkStandardClient: SlarkClient
     {
-        public IDictionary<string, object> Body { get; set; }
+
     }
 }

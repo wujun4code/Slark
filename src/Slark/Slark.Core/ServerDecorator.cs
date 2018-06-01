@@ -12,8 +12,5 @@ namespace Slark.Core
         {
             this.DecoratedServer = slarkServer;
         }
-
-
-
     }
 }

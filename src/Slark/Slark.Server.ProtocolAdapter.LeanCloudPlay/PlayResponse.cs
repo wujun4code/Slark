@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Slark.Core
+namespace Slark.Server.LeanCloud.Play
 {
-    public class SlarkResponse
+    public class PlayResponse
     {
         public IDictionary<string, object> Body { get; set; }
     }

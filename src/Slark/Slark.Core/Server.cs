@@ -20,6 +20,8 @@ namespace Slark.Core
 
         public abstract Task OnDisconnected(SlarkClientConnection slarkClientConnection);
 
+        public abstract Task<string> OnRequest(string route, string message);
+
         public abstract List<SlarkClientConnection> Connections { get; set; }
 
         public virtual Task Broadcast(string message)

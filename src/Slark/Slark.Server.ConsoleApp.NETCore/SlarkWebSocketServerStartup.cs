@@ -10,6 +10,11 @@ namespace Slark.Server.ConsoleApp.NETCore
 {
     public static class SlarkWebSocketServerStartup
     {
+        public static IApplicationBuilder UseSlarkHttpServer(this IApplicationBuilder app, SlackHttpServer slackHttpServer)
+        {
+            return app;
+        }
+
         public static IApplicationBuilder UseSlarkWebSokcetServer(this IApplicationBuilder app, SlarkWebSokcetServer slarkWebSokcetServer)
         {
             app.Use(async (context, next) =>
