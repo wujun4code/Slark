@@ -1,4 +1,6 @@
 ﻿using Slark.Core;
+using Slark.Server.LeanCloud.Play.Protocol.Session;
+using Slark.Server.LeanCloud.Play.Protocol.Validator;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,20 +10,25 @@ namespace Slark.Server.LeanCloud.Play
 {
     public class PlayServer : SlarkStandardServer
     {
-        public IDictionary<string, IPlayRouteHandler> RouterHandlers { get; set; }
+        public IDictionary<string, IPlayRPCHandler> RPCHandlers { get; set; }
         public IDictionary<string, IPlayCommandHandler> CommandHandlers { get; set; }
+        public IList<IPlayValidator> Validators { get; set; }
 
         public PlayServer()
         {
-            RouterHandlers = new Dictionary<string, IPlayRouteHandler>();
-            AddRouteHandler(new LobbyRouterHandler());
+            RPCHandlers = new Dictionary<string, IPlayRPCHandler>();
+            AddRPCHandler(new LobbyRouterHandler());
 
             CommandHandlers = new Dictionary<string, IPlayCommandHandler>();
+            AddCommandHandler(new SessionOpen());
+
+            Validators = new List<IPlayValidator>();
+            Validators.Add(new EmptyDataPacket());
         }
 
-        public void AddRouteHandler(IPlayRouteHandler playRouteHandler)
+        public void AddRPCHandler(IPlayRPCHandler playRouteHandler)
         {
-            RouterHandlers.Add(playRouteHandler.Router, playRouteHandler);
+            RPCHandlers.Add(playRouteHandler.Method, playRouteHandler);
         }
 
         public void AddCommandHandler(IPlayCommandHandler playCommandHandler)
@@ -32,11 +39,24 @@ namespace Slark.Server.LeanCloud.Play
         public override async Task OnReceived(SlarkClientConnection slarkClientConnection, string message)
         {
             var request = new PlayRequest(message);
+
+            foreach (var validator in Validators)
+            {
+                var valid = await validator.Validate(request);
+                if (!valid)
+                {
+                    await validator.OnInvalid(slarkClientConnection, request);
+                    return;
+                }
+            }
+
             var context = new PlayContext()
             {
+                Server = this,
                 Request = request,
                 Response = new PlayResponse()
             };
+
             if (CommandHandlers.ContainsKey(request.CommandHandlerKey))
             {
                 await CommandHandlers[request.CommandHandlerKey].ExecuteAsync(context);
@@ -44,11 +64,11 @@ namespace Slark.Server.LeanCloud.Play
             }
         }
 
-        public override Task<string> OnRequest(string route, string message)
+        public override Task<string> OnRPC(string method, string message)
         {
-            if (RouterHandlers.ContainsKey(route))
+            if (RPCHandlers.ContainsKey(method))
             {
-                return RouterHandlers[route].Response(message);
+                return RPCHandlers[method].RPC(message);
             }
             return Task.FromResult(message);
         }

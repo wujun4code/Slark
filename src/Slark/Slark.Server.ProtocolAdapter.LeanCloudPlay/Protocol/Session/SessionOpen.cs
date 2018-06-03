@@ -18,7 +18,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol.Session
                 { "cmd", this.Command },
                 { "op", "opened"},
                 { "i", context.Request.CommandId },
-                { "st", SlarkToken.NewToken()},
+                { "st", SlarkToken.NewToken().Token},
                 { "stTtl" , 2880 },
                 { "appId", context.Request.Body["appId"] },
                 { "peerId", context.Request.Body["peerId"] }

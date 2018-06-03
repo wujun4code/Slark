@@ -81,9 +81,9 @@ namespace Slark.Server.WebSoket
             await this.DecoratedServer.OnDisconnected(slarkClientConnection);
         }
 
-        public override Task<string> OnRequest(string route, string message)
+        public override Task<string> OnRPC(string method, string message)
         {
-            return this.DecoratedServer.OnRequest(route, message);
+            return this.DecoratedServer.OnRPC(method, message);
         }
     }
 }

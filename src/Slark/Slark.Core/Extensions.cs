@@ -8,7 +8,10 @@ namespace Slark.Core
     {
         public static string ToJsonString(this IDictionary<string, object> source)
         {
-            string json = JsonConvert.SerializeObject(source, Formatting.Indented);
+            string json = JsonConvert.SerializeObject(source, new JsonSerializerSettings()
+            {
+
+            });
             return json;
         }
 

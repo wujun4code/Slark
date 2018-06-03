@@ -43,7 +43,7 @@ namespace Slark.Server.ConsoleApp.NETCore
              {
                  var router = context.GetRouteValue("router").ToString();
                  var message = context.Request.QueryString.Value;
-                 var response = await SlarkWebSokcetServer.OnRequest(router, message);
+                 var response = await SlarkWebSokcetServer.OnRPC(router, message);
                  await context.Response.WriteAsync(response);
              });
 

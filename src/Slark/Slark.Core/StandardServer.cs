@@ -34,6 +34,6 @@ namespace Slark.Core
             await this.Broadcast(message);
         }
 
-        public abstract override Task<string> OnRequest(string route, string message);
+        public abstract override Task<string> OnRPC(string method, string message);
     }
 }

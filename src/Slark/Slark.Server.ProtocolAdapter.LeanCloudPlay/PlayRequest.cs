@@ -10,8 +10,11 @@ namespace Slark.Server.LeanCloud.Play
     {
         public PlayRequest(string jsonMessage)
         {
+            MetaString = jsonMessage;
             Body = jsonMessage.ToDictionary();
         }
+
+        public string MetaString { get; set; }
 
         public IDictionary<string, object> Body { get; set; }
 
@@ -19,7 +22,7 @@ namespace Slark.Server.LeanCloud.Play
         {
             get
             {
-                return Body["cmd"] + "" + Body["op"];
+                return Body["cmd"] + "-" + Body["op"];
             }
         }
 

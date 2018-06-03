@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class LobbyRouterHandler : IPlayRouteHandler
+    public class LobbyRouterHandler : IPlayRPCHandler
     {
-        public string Router { get; set; } = "router";
+        public string Method { get; set; } = "router";
 
-        public Task<string> Response(string message)
+        public Task<string> RPC(string message)
         {
             var lobbyRouterResponse = new Dictionary<string, object>()
             {
                 { "server", "ws://localhost:5000/ws"},
                 { "secondary", "ws://localhost:5000/ws"},
-                { "ttl", 1440}
+                { "ttl", 1440 }
             };
             return Task.FromResult(lobbyRouterResponse.ToJsonString());
         }

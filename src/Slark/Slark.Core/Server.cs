@@ -20,7 +20,7 @@ namespace Slark.Core
 
         public abstract Task OnDisconnected(SlarkClientConnection slarkClientConnection);
 
-        public abstract Task<string> OnRequest(string route, string message);
+        public abstract Task<string> OnRPC(string route, string message);
 
         public abstract List<SlarkClientConnection> Connections { get; set; }
 
