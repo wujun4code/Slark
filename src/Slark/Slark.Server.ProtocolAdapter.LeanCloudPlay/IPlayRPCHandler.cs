@@ -7,6 +7,6 @@ namespace Slark.Server.LeanCloud.Play
     {
         string Method { get; set; }
 
-        Task<string> RPC(string message);
+        Task<string> RPC(params object[] rpcParamters);
     }
 }

@@ -37,12 +37,17 @@ namespace Slark.Server.ConsoleApp.NETCore
             var SlarkWebSokcetServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new LeanCloud.Play.PlayServer());
             app.UseSlarkWebSokcetServer(SlarkWebSokcetServer);
 
+
+            var liveBoardcastServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new Slark.Server.LiveBroadcast.LiveBroadcastServer(), "/nba");
+            app.UseSlarkWebSokcetServer(liveBoardcastServer);
+
             var routeBuilder = new RouteBuilder(app);
 
             routeBuilder.MapGet("play/v1/{router}", async context =>
              {
                  var router = context.GetRouteValue("router").ToString();
                  var message = context.Request.QueryString.Value;
+                 var rpcParameters = message.Split('?');
                  var response = await SlarkWebSokcetServer.OnRPC(router, message);
                  await context.Response.WriteAsync(response);
              });

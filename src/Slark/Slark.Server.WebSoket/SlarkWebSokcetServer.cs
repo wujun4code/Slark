@@ -16,9 +16,15 @@ namespace Slark.Server.WebSoket
         public string RoutePath { get; set; } = "/ws";
         protected int BufferSize { get => 1024 * 4; }
 
+
         public SlarkWebSokcetServer(SlarkServer slarkServer) : base(slarkServer)
         {
 
+        }
+
+        public SlarkWebSokcetServer(SlarkServer slarkServer, string routePath) : this(slarkServer)
+        {
+            this.RoutePath = routePath;
         }
 
         public override List<SlarkClientConnection> Connections
@@ -81,9 +87,9 @@ namespace Slark.Server.WebSoket
             await this.DecoratedServer.OnDisconnected(slarkClientConnection);
         }
 
-        public override Task<string> OnRPC(string method, string message)
+        public override Task<string> OnRPC(string method, params object[] rpcParamters)
         {
-            return this.DecoratedServer.OnRPC(method, message);
+            return this.DecoratedServer.OnRPC(method, rpcParamters);
         }
     }
 }

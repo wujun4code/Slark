@@ -10,7 +10,7 @@ namespace Slark.Server.LeanCloud.Play
     {
         public string Method { get; set; } = "router";
 
-        public Task<string> RPC(string message)
+        public Task<string> RPC(params object[] rpcParamters)
         {
             var lobbyRouterResponse = new Dictionary<string, object>()
             {

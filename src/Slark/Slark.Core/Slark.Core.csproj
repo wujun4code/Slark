@@ -7,4 +7,10 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\APIClient\" />
+    <Folder Include="Utils\Encoding\" />
+    <Folder Include="Utils\Http\" />
+    <Folder Include="Utils\Polling\" />
+  </ItemGroup>
 </Project>

@@ -64,13 +64,13 @@ namespace Slark.Server.LeanCloud.Play
             }
         }
 
-        public override Task<string> OnRPC(string method, string message)
+        public override Task<string> OnRPC(string method, params object[] rpcParamters)
         {
             if (RPCHandlers.ContainsKey(method))
             {
-                return RPCHandlers[method].RPC(message);
+                return RPCHandlers[method].RPC(rpcParamters);
             }
-            return Task.FromResult(message);
+            return this.OnRPC(method, rpcParamters);
         }
     }
 }
