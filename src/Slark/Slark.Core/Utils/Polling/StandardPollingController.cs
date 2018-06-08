@@ -18,9 +18,7 @@ namespace Slark.Core.Utils
 
         public override async Task<string> PollingAsync()
         {
-            var response = await APIClient.HttpClient.GetAsync(APIUrl);
-            var obj = await APIClient.EnDecoder.Decoder.Decode(response);
-            var text = await APIClient.EnDecoder.Encoder.Encode(obj);
+            var text = await APIClient.GrabAsync(APIUrl);
             return text;
         }
     }

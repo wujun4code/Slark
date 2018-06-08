@@ -8,16 +8,12 @@ namespace Slark.Core.Utils
         public abstract IEnDecoder EnDecoder { get; set; }
         public abstract ISlarkHttpClient HttpClient { get; set; }
 
-        public SlarkAPIClient()
-        {
-
-        }
-
-        public async Task<object> GrabAsync(string url)
+        public virtual async Task<string> GrabAsync(string url)
         {
             var response = await HttpClient.GetAsync(url);
             var obj = await EnDecoder.Decoder.Decode(response);
-            return obj;
+            var text = await EnDecoder.Encoder.Encode(obj);
+            return text;
         }
     }
 }

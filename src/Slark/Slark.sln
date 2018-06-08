@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server.ConsoleApp.NET
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server.LeanCloud.Play", "Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.LeanCloud.Play.csproj", "{10F0C400-525D-44BD-8901-69D45D192347}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server.LiveBroadcast", "Slark.Server.LiveBroadcast\Slark.Server.LiveBroadcast.csproj", "{6BB49C3E-DE86-4354-817A-0BE949DF298D}"
 EndProject
 Global
@@ -37,10 +35,6 @@ Global
 		{10F0C400-525D-44BD-8901-69D45D192347}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10F0C400-525D-44BD-8901-69D45D192347}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10F0C400-525D-44BD-8901-69D45D192347}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B14BB65-E7BD-4D93-8985-DEF1E9D66FA1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BB49C3E-DE86-4354-817A-0BE949DF298D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6BB49C3E-DE86-4354-817A-0BE949DF298D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BB49C3E-DE86-4354-817A-0BE949DF298D}.Release|Any CPU.ActiveCfg = Release|Any CPU

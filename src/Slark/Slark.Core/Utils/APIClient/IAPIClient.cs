@@ -9,6 +9,6 @@ namespace Slark.Core.Utils
 
         ISlarkHttpClient HttpClient { get; set; }
 
-        Task<object> GrabAsync(string url);
+        Task<string> GrabAsync(string url);
     }
 }

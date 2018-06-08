@@ -18,4 +18,7 @@
     <ProjectReference Include="..\Slark.Server.LiveBroadcast\Slark.Server.LiveBroadcast.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Dockerfile.txt" />
+  </ItemGroup>
 </Project>

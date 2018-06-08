@@ -1,0 +1,8 @@
+version: '2.1'
+
+services:
+  slark:
+    image: slark
+    build: .
+    ports:
+      - 60000:60000
