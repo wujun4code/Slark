@@ -14,7 +14,7 @@ namespace Slark.Server.LiveBroadcast
         }
 
         public NBAPollingController(uint dueTimeInSecond = 0, uint intervalInSecond = 60)
-            : this("http://data.nba.net/prod/v1/20180606/scoreboard.json", dueTimeInSecond, intervalInSecond)
+            : this(string.Format("http://data.nba.net/prod/v1/{0}/scoreboard.json", DateTime.Now.AddDays(-1).ToString("yyyyMMdd")), dueTimeInSecond, intervalInSecond)
         {
 
         }

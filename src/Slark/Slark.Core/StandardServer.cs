@@ -6,7 +6,7 @@ using Slark.Core.Utils;
 
 namespace Slark.Core
 {
-    public abstract class SlarkStandardServer : SlarkServer
+    public class SlarkStandardServer : SlarkServer
     {
         public SlarkStandardServer()
         {

@@ -12,5 +12,11 @@
     <Folder Include="Utils\Encoding\" />
     <Folder Include="Utils\Http\" />
     <Folder Include="Utils\Polling\" />
+    <Folder Include="Utils\Protocol\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Utils\Protocol\:Code:Slark:src:Slark:Slark.Core:Utils:Protocol:DirectProtocol.cs" />
+    <Compile Remove="Utils\Protocol\:Code:Slark:src:Slark:Slark.Core:Utils:Protocol:IProtocol.cs" />
+    <Compile Remove="Utils\Protocol\IMessageHandler.cs" />
   </ItemGroup>
 </Project>
