@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Slark.Core;
 
-namespace Slark.Server.LeanCloud.Play.Protocol.Validator
+namespace Slark.Server.LeanCloud.Play.Protocol
 {
     public class EmptyDataPacket : IPlayValidator
     {
@@ -12,14 +12,15 @@ namespace Slark.Server.LeanCloud.Play.Protocol.Validator
         {
             OnInvalid = async (connection, request) =>
              {
-                 await connection.SendAsync(request.MetaString);
+                 await connection.SendAsync(request.MetaText);
              };
         }
+
         public Func<SlarkClientConnection, PlayRequest, Task> OnInvalid { get; set; }
 
         public Task<bool> Validate(PlayRequest playRequest)
         {
-            return Task.FromResult(playRequest.MetaString != "{}");
+            return Task.FromResult(playRequest.MetaText != "{}");
         }
     }
 }

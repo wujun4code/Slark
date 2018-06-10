@@ -1,4 +1,5 @@
 ﻿using Slark.Core;
+using Slark.Core.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,15 +7,15 @@ using System.Text;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class PlayRequest
+    public class PlayRequest : ISlarkMessage
     {
         public PlayRequest(string jsonMessage)
         {
-            MetaString = jsonMessage;
+            MetaText = jsonMessage;
             Body = jsonMessage.ToDictionary();
         }
 
-        public string MetaString { get; set; }
+        public string MetaText { get; set; }
 
         public IDictionary<string, object> Body { get; set; }
 
@@ -34,6 +35,13 @@ namespace Slark.Server.LeanCloud.Play
             }
         }
 
+        public bool IsValid
+        {
+            get
+            {
+                return Body.ContainsKey("cmd") && Body.ContainsKey("op");
+            }
+        }
 
     }
 }

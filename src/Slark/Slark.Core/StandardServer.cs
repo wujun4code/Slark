@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Slark.Core.Protocol;
 using Slark.Core.Utils;
 
 namespace Slark.Core
@@ -12,10 +13,11 @@ namespace Slark.Core
         {
             Connections = new List<SlarkClientConnection>();
             Pollings = new List<SlarkPollingController>();
+
         }
 
         public List<SlarkPollingController> Pollings { get; set; }
-
+        public virtual IProtocolMatcher ProtocolMatcher { get; set; }
         public void AddPolling(SlarkPollingController slarkPollingController)
         {
             slarkPollingController.Server = this;
@@ -41,7 +43,19 @@ namespace Slark.Core
 
         public override async Task OnReceived(SlarkClientConnection slarkClientConnection, string message)
         {
-            await this.BroadcastAsync(message);
+            var context = new SlarkContext()
+            {
+                Server = this,
+                Message = new SlarkStandardMessage()
+                {
+                    MetaText = message
+                },
+                Sender = slarkClientConnection,
+            };
+            var processor = await ProtocolMatcher.FindAsync(context);
+            context.Notice = await processor.SerializeAsync(context.Message);
+            context.Receivers = await processor.GetTargetsAsync(context);
+            await context.PushNoticeAsync();
         }
 
         public override Task<string> OnRPC(string method, params object[] rpcParamters)

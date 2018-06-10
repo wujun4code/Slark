@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace Slark.Core.Utils
+namespace Slark.Core.Protocol
 {
     public interface ISlarkProtocol
     {
         Task<string> SerializeAsync(ISlarkMessage message);
-        Task<ICollection<SlarkClient>> GetTargetsAsync(SlarkServer server);
+        Task<IEnumerable<SlarkClientConnection>> GetTargetsAsync(SlarkContext context);
     }
 }

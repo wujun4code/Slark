@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Slark.Core
@@ -14,11 +16,20 @@ namespace Slark.Core
             });
             return json;
         }
-
+        public static Task<string> ToJsonStringAsync(this IDictionary<string, object> source)
+        {
+            return Task.FromResult(source.ToJsonString());
+        }
         public static IDictionary<string, object> ToDictionary(this string obj)
         {
             var values = JsonConvert.DeserializeObject<Dictionary<string, object>>(obj);
             return values;
+        }
+
+        public static Task BroadcastAsync(this IEnumerable<SlarkClientConnection> connections, string message)
+        {
+            var sendTasks = connections.Select(connection => connection.SendAsync(message));
+            return Task.WhenAll(sendTasks);
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Slark.Core.Utils
+namespace Slark.Core.Protocol
 {
     public interface IProtocolMatcher
     {
-        Task<ISlarkProtocol> FindAsync(string message);
+        Task<ISlarkProtocol> FindAsync(SlarkContext context);
     }
 }

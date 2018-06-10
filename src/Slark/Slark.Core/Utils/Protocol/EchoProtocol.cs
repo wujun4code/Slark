@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace Slark.Core.Protocol
 {
-    public class DirectProtocol : ISlarkProtocol
+    public class EchoProtocol : ISlarkProtocol
     {
         public Task<IEnumerable<SlarkClientConnection>> GetTargetsAsync(SlarkContext context)
         {
-            return Task.FromResult(context.Server.Connections as IEnumerable<SlarkClientConnection>);
+            return context.Sender.ToEnumerableAsync();
         }
 
         public Task<string> SerializeAsync(ISlarkMessage message)

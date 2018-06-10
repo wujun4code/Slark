@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Slark.Core.Utils
+namespace Slark.Core.Protocol
 {
     public interface ISlarkMessage
     {
