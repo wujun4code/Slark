@@ -10,7 +10,5 @@ namespace Slark.Server.LeanCloud.Play
     {
         string Command { get; set; }
         string Operation { get; set; }
-
-        Task ExecuteAsync(PlayContext context);
     }
 }

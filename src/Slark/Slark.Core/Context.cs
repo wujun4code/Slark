@@ -13,6 +13,8 @@ namespace Slark.Core
 
         public ISlarkMessage Message { get; set; }
 
+        public string Response { get; set; }
+
         public string Notice { get; set; }
 
         public IEnumerable<SlarkClientConnection> Receivers { get; set; }
@@ -20,6 +22,16 @@ namespace Slark.Core
         public virtual Task PushNoticeAsync()
         {
             return Receivers.BroadcastAsync(Notice);
+        }
+
+        public virtual Task ReplyAsync()
+        {
+            return Sender.SendAsync(Response);
+        }
+
+        public bool HasNotice
+        {
+            get;set;
         }
     }
 

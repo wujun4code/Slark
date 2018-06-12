@@ -10,6 +10,7 @@ namespace Slark.Core
         {
 
         }
+
         public SlarkToken Token { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace Slark.Server.WebSoket
         public SlarkWebSocketClientConnection(WebSocket webSocket)
         {
             WebSocket = webSocket;
+            Id = Guid.NewGuid().ToString();
         }
 
         public override async Task SendAsync(string message)

@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Slark.Core;
 using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,11 +36,23 @@ namespace Slark.Server.ConsoleApp.NETCore
             {
                 app.UseDeveloperExceptionPage();
             }
-            var SlarkWebSokcetServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new LeanCloud.Play.PlayServer());
-            app.UseSlarkWebSokcetServer(SlarkWebSokcetServer);
+            //app.Use(async (context, next) => {
+            //    context.Request.EnableRewind();
+            //    await next();
+            //});
 
+            var hostingUrl = "localhost:5000";
 
-            var liveBoardcastServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new Slark.Server.LiveBroadcast.LiveBroadcastServer(), "/nba");
+            var playGameServer = new LeanCloud.Play.PlayGameServer();
+            var playGameWebSocketServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(playGameServer, hostingUrl, "/game");
+            app.UseSlarkWebSokcetServer(playGameWebSocketServer);
+
+            var gameServers = new LeanCloud.Play.PlayGameServer[] { playGameServer };
+
+            var playLobbyServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new LeanCloud.Play.PlayLobbyServer(gameServers), hostingUrl, "/lobby");
+            app.UseSlarkWebSokcetServer(playLobbyServer);
+
+            var liveBoardcastServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new Slark.Server.LiveBroadcast.LiveBroadcastServer(), hostingUrl, "/nba");
             app.UseSlarkWebSokcetServer(liveBoardcastServer);
 
             var routeBuilder = new RouteBuilder(app);
@@ -48,26 +62,12 @@ namespace Slark.Server.ConsoleApp.NETCore
                  var router = context.GetRouteValue("router").ToString();
                  var message = context.Request.QueryString.Value;
                  var rpcParameters = message.Split('?');
-                 var response = await SlarkWebSokcetServer.OnRPC(router, message);
+                 var response = await playLobbyServer.OnRPC(router, message);
                  await context.Response.WriteAsync(response);
              });
 
             var routes = routeBuilder.Build();
             app.UseRouter(routes);
-        }
-
-        private async Task Echo(HttpContext context, WebSocket webSocket)
-        {
-            var buffer = new byte[1024 * 4];
-            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-
-            while (!result.CloseStatus.HasValue)
-            {
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-
-                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            }
-            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
     }
 }

@@ -31,5 +31,12 @@ namespace Slark.Core
             var sendTasks = connections.Select(connection => connection.SendAsync(message));
             return Task.WhenAll(sendTasks);
         }
+
+        public static string RandomOne(this IEnumerable<string> source)
+        {
+            var rand = new Random();
+            var randomOne = source.ElementAt(new System.Random().Next() % source.Count());
+            return randomOne;
+        }
     }
 }

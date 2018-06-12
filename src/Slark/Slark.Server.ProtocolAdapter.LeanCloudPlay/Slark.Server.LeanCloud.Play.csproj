@@ -8,4 +8,7 @@
     <ProjectReference Include="..\Slark.Core\Slark.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Protocol\Validator\EmptyDataPacket.cs" />
+  </ItemGroup>
 </Project>

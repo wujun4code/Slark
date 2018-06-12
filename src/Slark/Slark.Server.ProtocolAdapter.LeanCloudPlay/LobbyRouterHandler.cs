@@ -14,10 +14,11 @@ namespace Slark.Server.LeanCloud.Play
         {
             var lobbyRouterResponse = new Dictionary<string, object>()
             {
-                { "server", "ws://localhost:5000/ws"},
-                { "secondary", "ws://localhost:5000/ws"},
+                { "server", "ws://localhost:5000/lobby" },
+                { "secondary", "ws://localhost:5000/lobby" },
                 { "ttl", 1440 }
             };
+
             return Task.FromResult(lobbyRouterResponse.ToJsonString());
         }
     }

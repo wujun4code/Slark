@@ -11,9 +11,8 @@ namespace Slark.Core
     {
         public SlarkStandardServer()
         {
-            Connections = new List<SlarkClientConnection>();
+            ConnectionList = new ConcurrentHashSet<SlarkClientConnection>();
             Pollings = new List<SlarkPollingController>();
-
         }
 
         public List<SlarkPollingController> Pollings { get; set; }
@@ -24,11 +23,14 @@ namespace Slark.Core
             Pollings.Add(slarkPollingController);
         }
 
-        public override List<SlarkClientConnection> Connections
+        public ConcurrentHashSet<SlarkClientConnection> ConnectionList
         {
             get;
             set;
         }
+
+        public override IEnumerable<SlarkClientConnection> Connections { get => ConnectionList; }
+        public override string ServerUrl { get; set; }
 
         public override Task OnConnected(SlarkClientConnection slarkClientConnection)
         {
@@ -52,10 +54,19 @@ namespace Slark.Core
                 },
                 Sender = slarkClientConnection,
             };
-            var processor = await ProtocolMatcher.FindAsync(context);
-            context.Notice = await processor.SerializeAsync(context.Message);
-            context.Receivers = await processor.GetTargetsAsync(context);
-            await context.PushNoticeAsync();
+
+            var processor = await MatchProtocolAsync(context);
+
+            context.Response = await processor.ResponseAsync(context);
+
+            await context.ReplyAsync();
+
+            if (context.HasNotice)
+            {
+                context.Receivers = await processor.GetTargetsAsync(context);
+                context.Notice = await processor.NotifyAsync(context);
+                await context.PushNoticeAsync();
+            }
         }
 
         public override Task<string> OnRPC(string method, params object[] rpcParamters)
@@ -63,5 +74,27 @@ namespace Slark.Core
             return this.RPCAllAsync(method, rpcParamters);
         }
 
+        public virtual Task<ISlarkProtocol> MatchProtocolAsync(SlarkContext context)
+        {
+            if (ProtocolMatcher == null)
+                return Task.FromResult(new EchoProtocol() as ISlarkProtocol);
+            return ProtocolMatcher.FindAsync(context);
+        }
+
+        public override void AddConnectionSync(SlarkClientConnection connection)
+        {
+            lock (ConnectionList)
+            {
+                ConnectionList.Add(connection);
+            }
+        }
+
+        public override void RemoveConnectionSync(SlarkClientConnection connection)
+        {
+            lock (ConnectionList)
+            {
+                ConnectionList.Remove(connection);
+            }
+        }
     }
 }

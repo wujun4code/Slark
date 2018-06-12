@@ -8,12 +8,18 @@ namespace Slark.Core.Protocol
     {
         public Task<IEnumerable<SlarkClientConnection>> GetTargetsAsync(SlarkContext context)
         {
-            return context.Sender.ToEnumerableAsync();
+            throw new NotImplementedException();
         }
 
-        public Task<string> SerializeAsync(ISlarkMessage message)
+        public Task<string> NotifyAsync(SlarkContext context)
         {
-            return Task.FromResult(message.MetaText);
+            throw new NotImplementedException();
+        }
+
+        public Task<string> ResponseAsync(SlarkContext context)
+        {
+            context.HasNotice = false;
+            return Task.FromResult(context.Message.MetaText);
         }
     }
 }

@@ -11,9 +11,15 @@ namespace Slark.Core.Protocol
             return Task.FromResult(context.Server.Connections as IEnumerable<SlarkClientConnection>);
         }
 
-        public Task<string> SerializeAsync(ISlarkMessage message)
+        public Task<string> NotifyAsync(SlarkContext context)
         {
-            return Task.FromResult(message.MetaText);
+            return Task.FromResult(context.Message.MetaText);
+        }
+
+        public Task<string> ResponseAsync(SlarkContext context)
+        {
+            context.HasNotice = true;
+            return Task.FromResult(context.Message.MetaText);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace Slark.Core
 {
@@ -17,13 +18,19 @@ namespace Slark.Core
 
         public abstract Task<string> OnRPC(string method, params object[] rpcParamters);
 
-        public abstract List<SlarkClientConnection> Connections { get; set; }
-
         public virtual Task BroadcastAsync(string message)
         {
             var sendTasks = Connections.Select(connection => connection.SendAsync(message));
             return Task.WhenAll(sendTasks);
         }
+
+        public abstract IEnumerable<SlarkClientConnection> Connections { get; }
+
+        public abstract string ServerUrl { get; set; }
+
+        public abstract void AddConnectionSync(SlarkClientConnection connection);
+
+        public abstract void RemoveConnectionSync(SlarkClientConnection connection);
 
         public virtual async Task<string> RPCAllAsync(string method, params object[] rpcParamters)
         {

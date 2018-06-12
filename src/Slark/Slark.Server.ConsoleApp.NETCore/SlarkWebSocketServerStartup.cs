@@ -10,39 +10,34 @@ namespace Slark.Server.ConsoleApp.NETCore
 {
     public static class SlarkWebSocketServerStartup
     {
-        public static IApplicationBuilder UseSlarkHttpServer(this IApplicationBuilder app, SlackHttpServer slackHttpServer)
-        {
-            return app;
-        }
-
         public static IApplicationBuilder UseSlarkWebSokcetServer(this IApplicationBuilder app, SlarkWebSokcetServer slarkWebSokcetServer)
         {
             app.Use(async (context, next) =>
             {
-                if (context.Request.Path == slarkWebSokcetServer.RoutePath)
+                if (context.Request.Path != slarkWebSokcetServer.RoutePath)
                 {
-                    if (context.WebSockets.IsWebSocketRequest)
-                    {
-                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                        var connection = await slarkWebSokcetServer.OnWebSocketConnected(context, webSocket);
-                        if (connection != null)
-                        {
-                            await slarkWebSokcetServer.OnWebSocketInvoked(connection);
-                        }
-                        else
-                        {
-                            context.Response.StatusCode = 404;
-                        }
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = 400;
-                    }
+                    await next.Invoke();
+                    return;
+                }
+
+                if (!context.WebSockets.IsWebSocketRequest)
+                {
+                    context.Response.StatusCode = 400;
+                    return;
+                }
+
+                WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+
+                var connection = await slarkWebSokcetServer.OnWebSocketConnected(context, webSocket);
+                if (connection != null)
+                {
+                    await slarkWebSokcetServer.OnWebSocketInvoked(connection);
                 }
                 else
                 {
-                    await next();
+                    context.Response.StatusCode = 404;
                 }
+
             });
             return app;
         }
