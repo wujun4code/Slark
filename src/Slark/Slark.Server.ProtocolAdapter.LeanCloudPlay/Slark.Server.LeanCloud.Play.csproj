@@ -10,5 +10,9 @@
 
   <ItemGroup>
     <Compile Remove="Protocol\Validator\EmptyDataPacket.cs" />
+    <Compile Remove="Protocol\Room\MemberDisconnect.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Protocol\RPC\" />
   </ItemGroup>
 </Project>

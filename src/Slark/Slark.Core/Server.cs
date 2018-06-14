@@ -28,6 +28,8 @@ namespace Slark.Core
 
         public abstract string ServerUrl { get; set; }
 
+        public abstract string ClientConnectingAddress { get; set; }
+
         public abstract void AddConnectionSync(SlarkClientConnection connection);
 
         public abstract void RemoveConnectionSync(SlarkClientConnection connection);

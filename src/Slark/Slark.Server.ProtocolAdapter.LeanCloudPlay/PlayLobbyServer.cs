@@ -23,7 +23,7 @@ namespace Slark.Server.LeanCloud.Play
         {
             if (gameServers != null)
             {
-                GameServerUrls = gameServers.Select(gs => gs.ServerUrl).ToList();
+                GameServerUrls = gameServers.Select(gs => gs.ClientConnectingAddress).ToList();
                 GameServers = gameServers;
                 foreach (var gameServer in gameServers)
                 {
@@ -40,8 +40,11 @@ namespace Slark.Server.LeanCloud.Play
             AddRPCHandler(new LobbyRouterHandler());
 
             var protocolMatcher = new PlayProtocolMatcher();
+
             protocolMatcher.AddCommandHandler(new SessionOpen());
             protocolMatcher.AddCommandHandler(new RoomStart());
+            protocolMatcher.AddCommandHandler(new RoomJoin());
+            protocolMatcher.AddCommandHandler(new RoomRandomJoin());
 
             ProtocolMatcher = protocolMatcher;
 
@@ -57,7 +60,7 @@ namespace Slark.Server.LeanCloud.Play
         {
             if (RPCHandlers.ContainsKey(method))
             {
-                return RPCHandlers[method].RPC(rpcParamters);
+                return RPCHandlers[method].RPCAsync(this, rpcParamters);
             }
             return this.OnRPC(method, rpcParamters);
         }
@@ -76,6 +79,39 @@ namespace Slark.Server.LeanCloud.Play
                 client = new PlayClient();
             }
             return Task.FromResult(client);
+        }
+
+        public async Task<Tuple<PlayGameServer, PlayRoom>> MatchAsync(RoomJoinRequest joinRequest)
+        {
+            foreach (var gameServer in GameServers)
+            {
+                var room = await gameServer.FindRoomMatchRequest(joinRequest);
+                if (room != null)
+                    return new Tuple<PlayGameServer, PlayRoom>(gameServer, room);
+            }
+
+            var createIfNotFound = joinRequest.CreateIfNotFound.HasValue && joinRequest.CreateIfNotFound.Value;
+
+            if (createIfNotFound)
+            {
+                var randomGameServer = GameServers.RandomOne();
+
+                var room = await randomGameServer.CreateEmptyRoomAsync(new RoomConfig()
+                {
+                    Name = joinRequest.Name
+                });
+
+                return new Tuple<PlayGameServer, PlayRoom>(randomGameServer, room);
+            }
+
+            return await RandomMatchAsync();
+        }
+
+        public Task<Tuple<PlayGameServer, PlayRoom>> RandomMatchAsync()
+        {
+            var randomGameServer = GameServers.RandomOne();
+            var randomRoom = randomGameServer.Rooms.RandomOne();
+            return Task.FromResult(new Tuple<PlayGameServer, PlayRoom>(randomGameServer, randomRoom));
         }
     }
 }

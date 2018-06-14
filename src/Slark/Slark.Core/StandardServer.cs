@@ -31,6 +31,7 @@ namespace Slark.Core
 
         public override IEnumerable<SlarkClientConnection> Connections { get => ConnectionList; }
         public override string ServerUrl { get; set; }
+        public override string ClientConnectingAddress { get; set; }
 
         public override Task OnConnected(SlarkClientConnection slarkClientConnection)
         {

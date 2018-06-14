@@ -12,9 +12,9 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public override string Command { get; set; } = "conv";
         public override string Operation { get; set; } = "start";
 
-        public override async Task<string> ResponseAsync(PlayRequest request, SlarkContext context)
+        public override async Task<PlayResponse> ResponseAsync(PlayRequest request, SlarkContext context)
         {
-            var response = new Dictionary<string, object>()
+            var responseBody = new Dictionary<string, object>()
             {
                 { "cmd", this.Command },
                 { "op", "started" },
@@ -27,24 +27,25 @@ namespace Slark.Server.LeanCloud.Play.Protocol
             {
                 if (context.Sender.Client is PlayClient client)
                 {
-                    var room = await game.CreateWithConfigAsync(roomConfig, client);
+                    var room = await game.CreateWithConfigAsync(roomConfig, context.Sender);
 
-                    response.Add("cid", room.Id);
-                    response.Add("visible", room.IsVisible);
-                    response.Add("masterClientId", room.MasterClientId);
-                    response.Add("memberIds", room.ActorIds);
-                    response.Add("actorIds", room.ActorIds);
-                    response.Add("m", room.MemberIds);
-                    response.Add("masterActorId", room.MasterClient.ActorId);
-                    response.Add("ttlSecs", room.TimeToKeep);
-                    response.Add("open", room.IsOpen);
-                    response.Add("emptyRoomTtl", room.EmptyTimeToLive);
-                    response.Add("expectMembers", room.ExpectedMemberPeerIds);
-                    response.Add("maxMembers", room.MaxPlayerCount);
-                    response.Add("members", room.MembersJsonFormatting);
+                    responseBody.Add("cid", room.Id);
+                    responseBody.Add("visible", room.IsVisible);
+                    responseBody.Add("masterClientId", room.MasterClientId);
+                    responseBody.Add("memberIds", room.ActorIds);
+                    responseBody.Add("actorIds", room.ActorIds);
+                    responseBody.Add("m", room.MemberIds);
+                    responseBody.Add("masterActorId", room.MasterClient.ActorId);
+                    responseBody.Add("ttlSecs", room.TimeToKeep);
+                    responseBody.Add("open", room.IsOpen);
+                    responseBody.Add("emptyRoomTtl", room.EmptyTimeToLive);
+                    responseBody.Add("expectMembers", room.ExpectedMemberPeerIds);
+                    responseBody.Add("maxMembers", room.MaxPlayerCount);
+                    responseBody.Add("members", room.MembersJsonFormatting);
                 }
             }
-            return response.ToJsonString();
+
+            return new PlayResponse(responseBody);
         }
     }
 }

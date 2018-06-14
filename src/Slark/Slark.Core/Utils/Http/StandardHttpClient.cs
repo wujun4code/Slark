@@ -6,11 +6,14 @@ namespace Slark.Core.Utils
 {
     public class SlarkStandardHttpClient : SlarkHttpClient
     {
-        private WebClient client = new WebClient();
+        private readonly WebClient client = new WebClient();
+
+        public WebClient Client => client;
+
         public override Task<string> GetAsync(string url)
         {
             var uri = new Uri(url);
-            return client.DownloadStringTaskAsync(uri);
+            return Client.DownloadStringTaskAsync(uri);
         }
     }
 }

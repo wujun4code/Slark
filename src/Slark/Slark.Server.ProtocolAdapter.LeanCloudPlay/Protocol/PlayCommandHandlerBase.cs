@@ -11,25 +11,48 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public virtual string Command { get; set; }
         public virtual string Operation { get; set; }
 
-        public virtual Task<IEnumerable<SlarkClientConnection>> GetTargetsAsync(SlarkContext context)
-        {
-            return Task.FromResult(context.Server.Connections as IEnumerable<SlarkClientConnection>);
-        }
-
-        public virtual Task<string> NotifyAsync(SlarkContext context)
-        {
-            return Task.FromResult(context.Message.MetaText);
-        }
-
-        public virtual Task<string> ResponseAsync(SlarkContext context)
+        public Task<IEnumerable<SlarkClientConnection>> GetTargetsAsync(SlarkContext context)
         {
             var request = new PlayRequest(context.Message.MetaText);
-            return ResponseAsync(request, context);
+            return GetTargetsAsync(request, context);
         }
 
-        public virtual Task<string> ResponseAsync(PlayRequest request, SlarkContext context)
+        public virtual Task<IEnumerable<SlarkClientConnection>> GetTargetsAsync(PlayRequest request, SlarkContext context)
         {
-            return request.Body.ToJsonStringAsync();
+            var receivers = context.Receivers ?? context.Sender.ToEnumerable();
+            return Task.FromResult(context.Receivers);
+        }
+
+        public async Task<string> NotifyAsync(SlarkContext context)
+        {
+            var request = new PlayRequest(context.Message.MetaText);
+            var notice = await NotifyAsync(request, context);
+            return notice.MetaText;
+        }
+
+        public virtual Task<PlayNotice> NotifyAsync(PlayRequest request, SlarkContext context)
+        {
+            var notice = context.Notice ?? request.MetaText;
+            return Task.FromResult(new PlayNotice()
+            {
+                MetaText = notice
+            });
+        }
+
+        public async Task<string> ResponseAsync(SlarkContext context)
+        {
+            var request = new PlayRequest(context.Message.MetaText);
+            var response = await ResponseAsync(request, context);
+            return response.MetaText;
+        }
+
+        public virtual Task<PlayResponse> ResponseAsync(PlayRequest request, SlarkContext context)
+        {
+            var response = context.Response ?? request.MetaText;
+            return Task.FromResult(new PlayResponse()
+            {
+                MetaText = response
+            });
         }
     }
 }

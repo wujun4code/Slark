@@ -19,7 +19,8 @@ namespace Slark.Core.Protocol
         public Task<string> ResponseAsync(SlarkContext context)
         {
             context.HasNotice = true;
-            return Task.FromResult(context.Message.MetaText);
+            context.Notice = context.Message.MetaText;
+            return Task.FromResult(context.Notice);
         }
     }
 }

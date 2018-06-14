@@ -5,6 +5,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using Slark.Core.Utils;
 using Slark.Server.LeanCloud.Play.Protocol;
+using System.Collections;
+using System.Threading.Tasks;
+using Slark.Core;
 
 namespace Slark.Server.LeanCloud.Play
 {
@@ -15,13 +18,17 @@ namespace Slark.Server.LeanCloud.Play
             Config = config;
 
             Name = config.Name;
-            IsVisible = config.IsVisible.HasValue ? config.IsVisible.Value : true;
-            IsOpen = config.IsOpen.HasValue ? config.IsOpen.Value : true;
-            EmptyTimeToLive = config.EmptyTimeToLive.HasValue ? config.EmptyTimeToLive.Value : 3600;
-            PlayerTimeToKeep = config.PlayerTimeToKeep.HasValue ? config.PlayerTimeToKeep.Value : 600;
+            IsVisible = !config.IsVisible.HasValue || config.IsVisible.Value;
+            IsOpen = !config.IsOpen.HasValue || config.IsOpen.Value;
+            EmptyTimeToLive = config.EmptyTimeToLive ?? 3600;
+            PlayerTimeToKeep = config.PlayerTimeToKeep ?? 600;
             ExpectedMemberPeerIds = config.ExpectedUsers;
-            MaxPlayerCount = config.MaxPlayerCount.HasValue ? config.MaxPlayerCount.Value : (byte)10;
+            MaxPlayerCount = config.MaxPlayerCount ?? (byte)10;
+
+            CustomRoomProperties = config.CustomRoomProperties ?? new Hashtable();
         }
+
+        public Hashtable CustomRoomProperties { get; set; }
 
         public Player MasterClient
         {
@@ -37,6 +44,11 @@ namespace Slark.Server.LeanCloud.Play
             {
                 return Players.FirstOrDefault(c => c.PeerId == CreatorId);
             }
+        }
+
+        public uint CurrentMaxActorId
+        {
+            get => Players.Max(p => p.ActorId);
         }
 
         public ConcurrentHashSet<Player> Players { get; set; }
@@ -78,6 +90,14 @@ namespace Slark.Server.LeanCloud.Play
             get; set;
         }
 
+        public uint MasterActorId
+        {
+            get
+            {
+                return MasterClient.ActorId;
+            }
+        }
+
         public string CreatorId
         {
             get; set;
@@ -105,6 +125,87 @@ namespace Slark.Server.LeanCloud.Play
             {
                 return Players.Select(p => p.ToJsonDictionary());
             }
+        }
+
+        public IEnumerable<SlarkClientConnection> AvailableConnections
+        {
+            get => this.Players.Select(p => p.ClientConnection);
+        }
+
+        public Task<Player> FindPlayerByClient(PlayClient client)
+        {
+            return Task.FromResult(Players.FirstOrDefault(p => p.Client == client));
+        }
+
+        public Task BroadcastAsync(PlayNotice notice)
+        {
+            var noticeText = notice.MetaText;
+            var connections = Players.Select(p => p.ClientConnection);
+            return connections.BroadcastAsync(noticeText);
+        }
+
+        public Task<Tuple<PlayResponse, PlayNotice>> NewPlayerJoinAsync(PlayRequest request, SlarkClientConnection connection)
+        {
+            var newPlayer = new Player()
+            {
+                ActorId = this.CurrentMaxActorId + 1,
+                ClientConnection = connection
+            };
+
+            this.Players.Add(newPlayer);
+
+            var responseBody = new Dictionary<string, object>()
+                {
+                    { "cmd","conv" },
+                    { "op", "added" },
+                    { "i", request.CommandId },
+                };
+
+            var open = this.Players.Count < this.MaxPlayerCount;
+            responseBody["open"] = open;
+
+            var visible = this.IsVisible;
+            responseBody["visible"] = visible;
+
+            responseBody["m"] = this.MemberIds;
+            responseBody["memberIds"] = this.ActorIds;
+            responseBody["actorIds"] = this.ActorIds;
+            responseBody["masterClientId"] = this.MasterClientId;
+
+            responseBody["masterActorId"] = this.MasterActorId;
+
+            responseBody["expectMembers"] = this.ExpectedMemberPeerIds;
+
+            responseBody["playerTtl"] = this.PlayerTimeToKeep;
+            responseBody["emptyRoomTtl"] = this.EmptyTimeToLive;
+            responseBody["maxMembers"] = this.MaxPlayerCount;
+            responseBody["members"] = this.MembersJsonFormatting;
+            responseBody["ttlSecs"] = this.TimeToKeep;
+            responseBody["attr"] = this.CustomRoomProperties;
+
+            var response = new PlayResponse(responseBody);
+
+            response.Timestamplize();
+            response.SerializeBody();
+
+
+            var noticeBody = new Dictionary<string, object>()
+                {
+                    { "cmd","conv" },
+                    { "op", "members-joined" },
+                };
+
+            noticeBody["initBy"] = newPlayer.PeerId;
+            noticeBody["master"] = newPlayer.PeerId == this.MasterClientId;
+            noticeBody["memberId"] = newPlayer.ActorId;
+            noticeBody["initByActor"] = newPlayer.ActorId;
+
+            var notice = new PlayNotice(noticeBody);
+
+            notice.Timestamplize();
+            notice.SerializeBody();
+
+            return Task.FromResult(new Tuple<PlayResponse, PlayNotice>(response, notice));
         }
     }
 }

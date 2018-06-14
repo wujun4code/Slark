@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Slark.Core.Protocol;
 
-namespace Slark.Server.LeanCloud.Play
+namespace Slark.Server.LeanCloud.Play.Protocol
 {
     public interface IPlayCommandHandler : ISlarkProtocol
     {

@@ -2,6 +2,7 @@
 using Slark.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
@@ -12,22 +13,25 @@ namespace Slark.Server.WebSoket
 {
     public class SlarkWebSokcetServer : SlarkServerDecorator
     {
-        public string RoutePath { get; set; } = "/ws";
+        public string WebSocketRoutePath { get; set; } = "/ws";
+
         protected int BufferSize { get => 1024 * 4; }
 
         public override IEnumerable<SlarkClientConnection> Connections => this.DecoratedServer.Connections;
 
         public override string ServerUrl { get => this.DecoratedServer.ServerUrl; set => this.DecoratedServer.ServerUrl = value; }
+        public override string ClientConnectingAddress { get => this.DecoratedServer.ClientConnectingAddress; set => this.DecoratedServer.ClientConnectingAddress = value; }
 
-        public SlarkWebSokcetServer(SlarkServer slarkServer, string hostingUrl = null, string routePath = null)
+        public SlarkWebSokcetServer(SlarkServer slarkServer, string hostingUrl = null, string websocketRoutePath = null)
             : base(slarkServer)
         {
-            if (!string.IsNullOrEmpty(routePath)) this.RoutePath = routePath;
+            if (!string.IsNullOrEmpty(websocketRoutePath)) this.WebSocketRoutePath = websocketRoutePath;
             if (string.IsNullOrEmpty(hostingUrl))
             {
                 hostingUrl = "localhost:5000";
             }
-            slarkServer.ServerUrl = hostingUrl + this.RoutePath;
+            slarkServer.ServerUrl = hostingUrl;
+            slarkServer.ClientConnectingAddress = "ws://" + hostingUrl + WebSocketRoutePath;
         }
 
         public SlarkWebSokcetServer(SlarkServer slarkServer) : this(slarkServer, null, null)
@@ -84,6 +88,25 @@ namespace Slark.Server.WebSoket
                                 }
                             }
                         }
+                        else
+                        {
+                            if (connection.WebSocket.State == WebSocketState.Aborted)
+                            {
+                                // Handle aborted
+                                await OnDisconnected(connection);
+                            }
+                            else if (connection.WebSocket.State == WebSocketState.Closed)
+                            {
+                                await OnDisconnected(connection);
+                            }
+                            else if (connection.WebSocket.State == WebSocketState.CloseReceived)
+                            {
+
+                            }
+                            else if (connection.WebSocket.State == WebSocketState.CloseSent)
+                            {
+                            }
+                        }
                     }
 
                     catch (WebSocketException websocketEx)
@@ -99,7 +122,13 @@ namespace Slark.Server.WebSoket
             }
             catch (Exception ex)
             {
+                if (connection.WebSocket.CloseStatus.HasValue)
+                {
+                    await this.OnDisconnected(connection);
+                }
                 Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
+                Trace.WriteLine(ex.Message);
             }
 
 

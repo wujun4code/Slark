@@ -1,23 +1,27 @@
-﻿using Slark.Core;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Slark.Core;
 using Slark.Core.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class PlayRequest : ISlarkMessage
+    public class PlayRequest : PlayJsonMessage
     {
         public PlayRequest(string jsonMessage)
+            : base(jsonMessage)
         {
-            MetaText = jsonMessage;
-            Body = jsonMessage.ToDictionary();
+            JsonObject = JObject.Parse(jsonMessage);
         }
 
-        public string MetaText { get; set; }
-
-        public IDictionary<string, object> Body { get; set; }
+        public JObject JsonObject
+        {
+            get;
+        }
 
         public string CommandHandlerKey
         {
@@ -43,5 +47,24 @@ namespace Slark.Server.LeanCloud.Play
             }
         }
 
+        public bool TryGet<T>(string key, T defaultValue, out T result)
+        {
+            var done = false;
+            result = defaultValue;
+            if (Body.ContainsKey(key))
+            {
+                try
+                {
+                    var temp = (T)Body[key];
+                    result = temp;
+                    done = true;
+                }
+                catch (InvalidCastException ex)
+                {
+                    //result = default(T);
+                }
+            }
+            return done;
+        }
     }
 }

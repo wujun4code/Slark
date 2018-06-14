@@ -2,12 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Slark.Core;
 
 namespace Slark.Server.LeanCloud.Play
 {
     public class Player
     {
-        public PlayClient Client { get; set; }
+        public PlayClient Client
+        {
+            get
+            {
+                return ClientConnection.Client as PlayClient;
+            }
+        }
+
+        public SlarkClientConnection ClientConnection { get; set; }
 
         public uint ActorId { get; set; }
 

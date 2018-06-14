@@ -12,5 +12,6 @@ namespace Slark.Server.LeanCloud.Play
 
         public string PeerId { get; set; }
 
+        public string RoomId { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace Slark.Server.ConsoleApp.NETCore
         {
             app.Use(async (context, next) =>
             {
-                if (context.Request.Path != slarkWebSokcetServer.RoutePath)
+                if (context.Request.Path != slarkWebSokcetServer.WebSocketRoutePath)
                 {
                     await next.Invoke();
                     return;
@@ -37,7 +37,6 @@ namespace Slark.Server.ConsoleApp.NETCore
                 {
                     context.Response.StatusCode = 404;
                 }
-
             });
             return app;
         }
