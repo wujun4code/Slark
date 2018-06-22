@@ -11,8 +11,10 @@
   <ItemGroup>
     <Compile Remove="Protocol\Validator\EmptyDataPacket.cs" />
     <Compile Remove="Protocol\Room\MemberDisconnect.cs" />
+    <Compile Remove="Protocol\Hook\IPlayCustomHook.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Protocol\RPC\" />
+    <Folder Include="Protocol\Plugin\" />
   </ItemGroup>
 </Project>

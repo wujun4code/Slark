@@ -1,15 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Slark.Core;
+using Slark.Server.WebSoket;
 using System;
-using System.Collections.Generic;
-using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Slark.Server.ConsoleApp.NETCore
 {
@@ -30,44 +25,52 @@ namespace Slark.Server.ConsoleApp.NETCore
                 KeepAliveInterval = TimeSpan.FromSeconds(120),
                 ReceiveBufferSize = 4 * 1024
             };
+
             app.UseWebSockets(webSocketOptions);
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
             //app.Use(async (context, next) => {
             //    context.Request.EnableRewind();
             //    await next();
             //});
 
-            var hostingUrl = "localhost:5000";
-
             var playGameServer = new LeanCloud.Play.PlayGameServer();
-            var playGameWebSocketServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(playGameServer, hostingUrl, "/game");
-            app.UseSlarkWebSokcetServer(playGameWebSocketServer);
+
+            playGameServer.UseWebSocket("/game");
 
             var gameServers = new LeanCloud.Play.PlayGameServer[] { playGameServer };
 
-            var playLobbyServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new LeanCloud.Play.PlayLobbyServer(gameServers), hostingUrl, "/lobby");
-            app.UseSlarkWebSokcetServer(playLobbyServer);
+            var playLobbyServer = new LeanCloud.Play.PlayLobbyServer(gameServers);
 
-            var liveBoardcastServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new Slark.Server.LiveBroadcast.LiveBroadcastServer(), hostingUrl, "/nba");
-            app.UseSlarkWebSokcetServer(liveBoardcastServer);
+            playLobbyServer.UseWebSocket("/lobby");
+
+            //var liveBoardcastServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new Slark.Server.LiveBroadcast.LiveBroadcastServer(), hostingUrl, "/nba");
+            //app.UseSlarkWebSokcetServer(liveBoardcastServer);
 
             var routeBuilder = new RouteBuilder(app);
 
             routeBuilder.MapGet("play/v1/{router}", async context =>
-             {
-                 var router = context.GetRouteValue("router").ToString();
-                 var message = context.Request.QueryString.Value;
-                 var rpcParameters = message.Split('?');
-                 var response = await playLobbyServer.OnRPC(router, message);
-                 await context.Response.WriteAsync(response);
-             });
+            {
+                var router = context.GetRouteValue("router").ToString();
+                var message = context.Request.QueryString.Value;
+                var rpcParameters = message.Split('?');
+                var response = await playLobbyServer.OnRPC(router, message);
+                await context.Response.WriteAsync(response);
+            });
+
+            routeBuilder.MapGet("/", async context =>
+            {
+                await context.Response.WriteAsync("hello!");
+            });
 
             var routes = routeBuilder.Build();
             app.UseRouter(routes);
+
+
         }
     }
 }

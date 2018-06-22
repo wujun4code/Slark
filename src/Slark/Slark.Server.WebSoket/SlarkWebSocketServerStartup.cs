@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Slark.Server.LeanCloud.Play;
-using Slark.Server.WebSoket;
-using System;
-using System.Collections.Generic;
+using Slark.Core;
 using System.Net.WebSockets;
-using System.Text;
 
-namespace Slark.Server.ConsoleApp.NETCore
+namespace Slark.Server.WebSoket
 {
     public static class SlarkWebSocketServerStartup
     {
+        public static SlarkWebSokcetServer UseWebSocket(this SlarkServer slarkServer, string serviceRelativeRoute)
+        {
+            var hostingUrl = "localhost:5000";
+            var webSocketServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(slarkServer, hostingUrl, serviceRelativeRoute);
+            return webSocketServer;
+        }
+
         public static IApplicationBuilder UseSlarkWebSokcetServer(this IApplicationBuilder app, SlarkWebSokcetServer slarkWebSokcetServer)
         {
             app.Use(async (context, next) =>

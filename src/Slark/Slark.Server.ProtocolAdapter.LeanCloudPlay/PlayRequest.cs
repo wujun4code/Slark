@@ -62,6 +62,7 @@ namespace Slark.Server.LeanCloud.Play
                 catch (InvalidCastException ex)
                 {
                     //result = default(T);
+                    Console.WriteLine(ex.Message);
                 }
             }
             return done;

@@ -9,7 +9,7 @@ using System.Collections.Concurrent;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class PlayLobbyServer : SlarkStandardServer
+    public class PlayLobbyServer : PlayServer
     {
         public IDictionary<string, IPlayRPCHandler> RPCHandlers { get; set; }
 

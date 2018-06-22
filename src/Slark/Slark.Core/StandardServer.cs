@@ -46,15 +46,7 @@ namespace Slark.Core
 
         public override async Task OnReceived(SlarkClientConnection slarkClientConnection, string message)
         {
-            var context = new SlarkContext()
-            {
-                Server = this,
-                Message = new SlarkStandardMessage()
-                {
-                    MetaText = message
-                },
-                Sender = slarkClientConnection,
-            };
+            var context = CreateContext(slarkClientConnection, message);
 
             var processor = await MatchProtocolAsync(context);
 
@@ -68,6 +60,25 @@ namespace Slark.Core
                 context.Notice = await processor.NotifyAsync(context);
                 await context.PushNoticeAsync();
             }
+        }
+
+        public virtual SlarkContext CreateContext(SlarkClientConnection slarkClientConnection, string message)
+        {
+            var context = new StandardContext()
+            {
+                Server = this,
+                Message = CreateMessage(message),
+                Sender = slarkClientConnection,
+            };
+            return context;
+        }
+
+        public virtual ISlarkMessage CreateMessage(string message)
+        {
+            return new SlarkStandardMessage()
+            {
+                MetaText = message
+            };
         }
 
         public override Task<string> OnRPC(string method, params object[] rpcParamters)

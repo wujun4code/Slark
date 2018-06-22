@@ -12,8 +12,10 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public override string Command { get; set; } = "conv";
         public override string Operation { get; set; } = "start";
 
-        public override Task<PlayResponse> ResponseAsync(PlayRequest request, SlarkContext context)
+        public override Task<string> ResponseAsync(SlarkContext context)
         {
+            var request = context.Message as PlayRequest;
+
             var responseBody = new Dictionary<string, object>()
             {
                 { "cmd", this.Command },
@@ -28,7 +30,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol
                 responseBody.Add("secureAddr", randomOne);
             }
 
-            return Task.FromResult(new PlayResponse(responseBody));
+            return Task.FromResult(responseBody.ToJsonString());
         }
     }
 }

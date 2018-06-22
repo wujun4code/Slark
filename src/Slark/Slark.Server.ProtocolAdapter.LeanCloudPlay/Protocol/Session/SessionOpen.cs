@@ -12,10 +12,10 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public override string Command { get; set; } = "session";
         public override string Operation { get; set; } = "open";
 
-        public override async Task<PlayResponse> ResponseAsync(PlayRequest request, SlarkContext context)
+        public override async Task<string> ResponseAsync(SlarkContext context)
         {
             context.Sender.Client.Token = SlarkToken.NewToken();
-
+            var request = context.Message as PlayRequest;
             if (context.Server is PlayLobbyServer lobby)
             {
                 if (context.Sender.Client is PlayClient client)
@@ -45,7 +45,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol
                 { "peerId", request.Body["peerId"] }
             };
 
-            return new PlayResponse(responseBody);
+            return responseBody.ToJsonString();
         }
     }
 }

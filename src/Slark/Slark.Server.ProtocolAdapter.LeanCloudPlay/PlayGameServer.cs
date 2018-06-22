@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class PlayGameServer : SlarkStandardServer
+    public class PlayGameServer : PlayServer
     {
         public PlayGameServer()
         {
             var protocolMatcher = new PlayProtocolMatcher();
 
-            protocolMatcher.AddCommandHandler(new RoomCreate());
+            protocolMatcher.AddCommandHandler(RoomCreateProtocol);
             protocolMatcher.AddCommandHandler(new SessionOpen());
             protocolMatcher.AddCommandHandler(new RoomUpdate());
             protocolMatcher.AddCommandHandler(new RoomJoin());
@@ -24,6 +24,17 @@ namespace Slark.Server.LeanCloud.Play
 
             Rooms = new ConcurrentHashSet<PlayRoom>();
         }
+
+        private RoomCreate roomCreate;
+        public RoomCreate RoomCreateProtocol
+        {
+            get
+            {
+                if (roomCreate == null) roomCreate = new RoomCreate();
+                return roomCreate;
+            }
+        }
+
 
         public PlayLobbyServer LobbyServer { get; set; }
 

@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server.LeanCloud.Play
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server.LiveBroadcast", "Slark.Server.LiveBroadcast\Slark.Server.LiveBroadcast.csproj", "{6BB49C3E-DE86-4354-817A-0BE949DF298D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Slark.Server.MVCCore", "Slark.Server.MVCCore\Slark.Server.MVCCore.csproj", "{D534A43D-D7DC-42B2-B286-680296DE86DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Landlords.Server", "Landlords.Server\Landlords.Server.csproj", "{4ACDFA71-38BD-45AD-987F-0195B4CEDD8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{6BB49C3E-DE86-4354-817A-0BE949DF298D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BB49C3E-DE86-4354-817A-0BE949DF298D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BB49C3E-DE86-4354-817A-0BE949DF298D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D534A43D-D7DC-42B2-B286-680296DE86DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D534A43D-D7DC-42B2-B286-680296DE86DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D534A43D-D7DC-42B2-B286-680296DE86DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D534A43D-D7DC-42B2-B286-680296DE86DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ACDFA71-38BD-45AD-987F-0195B4CEDD8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ACDFA71-38BD-45AD-987F-0195B4CEDD8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ACDFA71-38BD-45AD-987F-0195B4CEDD8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ACDFA71-38BD-45AD-987F-0195B4CEDD8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

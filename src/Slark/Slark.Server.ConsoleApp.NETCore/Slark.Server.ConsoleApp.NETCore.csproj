@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebSockets.Server" Version="0.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,9 +16,13 @@
     <ProjectReference Include="..\Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.LeanCloud.Play.csproj" />
     <ProjectReference Include="..\Slark.Server.WebSoket\Slark.Server.WebSoket.csproj" />
     <ProjectReference Include="..\Slark.Server.LiveBroadcast\Slark.Server.LiveBroadcast.csproj" />
+    <ProjectReference Include="..\Landlords.Server\Landlords.Server.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Dockerfile.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="SlarkWebSocketServerStartup.cs" />
   </ItemGroup>
 </Project>

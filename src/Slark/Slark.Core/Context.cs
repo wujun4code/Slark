@@ -5,19 +5,19 @@ using Slark.Core.Protocol;
 
 namespace Slark.Core
 {
-    public class SlarkContext
+    public abstract class SlarkContext
     {
-        public SlarkServer Server { get; set; }
+        public abstract SlarkServer Server { get; set; }
 
-        public SlarkClientConnection Sender { get; set; }
+        public abstract SlarkClientConnection Sender { get; set; }
 
-        public ISlarkMessage Message { get; set; }
+        public abstract ISlarkMessage Message { get; set; }
 
-        public string Response { get; set; }
+        public abstract string Response { get; set; }
 
-        public string Notice { get; set; }
+        public abstract string Notice { get; set; }
 
-        public IEnumerable<SlarkClientConnection> Receivers { get; set; }
+        public abstract IEnumerable<SlarkClientConnection> Receivers { get; set; }
 
         public virtual Task PushNoticeAsync()
         {
@@ -29,7 +29,7 @@ namespace Slark.Core
             return Sender.SendAsync(Response);
         }
 
-        public bool HasNotice
+        public abstract bool HasNotice
         {
             get;set;
         }

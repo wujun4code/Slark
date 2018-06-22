@@ -11,8 +11,10 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public override string Command { get; set; } = "conv";
         public override string Operation { get; set; } = "add";
 
-        public async override Task<PlayResponse> ResponseAsync(PlayRequest request, SlarkContext context)
+        public async override Task<string> ResponseAsync( SlarkContext context)
         {
+            var request = context.Message as PlayRequest;
+
             if (context.Server is PlayGameServer gameServer)
             {
                 request.TryGet<string>("cid", "", out string cid);
@@ -59,13 +61,14 @@ namespace Slark.Server.LeanCloud.Play.Protocol
                     responseBody.Add("visible", room.IsVisible);
                     responseBody.Add("maxMembers", room.MaxPlayerCount);
                 }
+
                 var response = new PlayResponse(responseBody);
                 response.Timestamplize();
                 response.SerializeBody();
-                return response;
+                return response.MetaText;
             }
 
-            return await base.ResponseAsync(request, context);
+            return await base.ResponseAsync(context);
         }
     }
 }

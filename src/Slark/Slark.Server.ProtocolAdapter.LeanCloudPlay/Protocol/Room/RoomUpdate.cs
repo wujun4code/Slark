@@ -17,8 +17,9 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public override string Command { get; set; } = "conv";
         public override string Operation { get; set; } = "update";
 
-        public override Task<IEnumerable<SlarkClientConnection>> GetTargetsAsync(PlayRequest request, SlarkContext context)
+        public override Task<IEnumerable<SlarkClientConnection>> GetTargetsAsync(SlarkContext context)
         {
+            var request = context.Message as PlayRequest;
             if (context.Server is PlayGameServer gameServer)
             {
                 request.TryGet<string>("cid", "", out string cid);
@@ -75,11 +76,12 @@ namespace Slark.Server.LeanCloud.Play.Protocol
                 return Task.FromResult(room.Players.Select(p => p.ClientConnection));
             }
 
-            return base.GetTargetsAsync(request, context);
+            return base.GetTargetsAsync(context);
         }
 
-        public override Task<PlayResponse> ResponseAsync(PlayRequest request, SlarkContext context)
+        public override Task<string> ResponseAsync(SlarkContext context)
         {
+            var request = context.Message as PlayRequest;
             var responseBody = new Dictionary<string, object>()
             {
                 { "cmd", this.Command },
@@ -92,11 +94,11 @@ namespace Slark.Server.LeanCloud.Play.Protocol
                 context.HasNotice = true;
             }
 
-            var response =  new PlayResponse(responseBody);
+            var response = new PlayResponse(responseBody);
             response.Timestamplize();
             response.SerializeBody();
 
-            return Task.FromResult(response);
+            return Task.FromResult(response.MetaText);
         }
     }
 }

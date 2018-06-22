@@ -144,6 +144,26 @@ namespace Slark.Server.LeanCloud.Play
             return connections.BroadcastAsync(noticeText);
         }
 
+        public Task RPCAsync(string methodName, params object[] methodParameters)
+        {
+            var notice = new PlayNotice()
+            {
+                Body = new Dictionary<string, object>()
+            };
+
+            var msg = new Dictionary<string, object>
+            {
+                { "m_n", methodName },
+                { "m_p", methodParameters }
+            };
+
+            notice.Body["cmd"] = "direct";
+            notice.Body["cid"] = this.Id;
+            notice.Body["msg"] = msg.ToJsonString();
+
+            return BroadcastAsync(notice);
+        }
+
         public Task<Tuple<PlayResponse, PlayNotice>> NewPlayerJoinAsync(PlayRequest request, SlarkClientConnection connection)
         {
             var newPlayer = new Player()

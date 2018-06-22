@@ -9,11 +9,12 @@ namespace Slark.Server.LeanCloud.Play.Protocol
     public class PlayProtocolMatcher : SlarkStandardProtocolMatcher
     {
         public IDictionary<string, IPlayCommandHandler> CommandHandlers { get; set; }
+
         public void AddCommandHandler(IPlayCommandHandler playCommandHandler, string fixKey = null)
         {
             if (CommandHandlers == null) CommandHandlers = new Dictionary<string, IPlayCommandHandler>();
             var key = !string.IsNullOrEmpty(fixKey) ? fixKey : playCommandHandler.Command + "-" + playCommandHandler.Operation;
-            CommandHandlers.Add(key, playCommandHandler);
+            CommandHandlers[key] = playCommandHandler;
         }
 
         public override Task<ISlarkProtocol> FindAsync(SlarkContext context)

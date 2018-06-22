@@ -27,3 +27,29 @@ Play.SetRouteServer("http://localhost:5000/play/");
 
 
 然后就可以按照文档里面的实例代码进行开发了。
+
+
+## 如何通过 Hook 来实现自定义游戏逻辑
+
+```cs
+using LeanCloud.Play;
+
+public class CustomOnNewPlayerConnectedHook: IPlayHookOnNewPlayerConnected
+{
+   public void OnNewPlayerConnected(PlayGameServer server, Player player)
+   {
+       Console.WriteLine(server.Connections,player.Id);
+       
+       // 设置自定义属性
+       player.Set("serverId",new Guid());
+
+       // 向整个服务器同步这个属性，其他 Player 能收到这个状态同步
+       player.Sync(server);
+
+       // 只向当前 player 同步这个属性
+       player.Sync(player);
+   }
+}
+
+PlayServer.Inject(new CustomOnNewPlayerConnectedHook());
+```

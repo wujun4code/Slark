@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using System;
 
 namespace Slark.Server.ConsoleApp.NETCore
 {
