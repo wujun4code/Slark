@@ -18,10 +18,12 @@ namespace Slark.Core
             });
             return json;
         }
+
         public static Task<string> ToJsonStringAsync(this IDictionary<string, object> source)
         {
             return Task.FromResult(source.ToJsonString());
         }
+
         public static IDictionary<string, object> ToDictionary(this string obj)
         {
             var values = JsonConvert.DeserializeObject<Dictionary<string, object>>(obj);
