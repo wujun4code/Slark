@@ -9,7 +9,16 @@ using System.Collections.Concurrent;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class PlayLobbyServer : PlayServer
+    public class StandardLobbyServer : PlayLobbyServer
+    {
+        public StandardLobbyServer(IEnumerable<PlayGameServer> gameServers = null)
+            : base(gameServers)
+        {
+
+        }
+    }
+
+    public abstract class PlayLobbyServer : PlayServer
     {
         public IDictionary<string, IPlayRPCHandler> RPCHandlers { get; set; }
 
@@ -23,7 +32,7 @@ namespace Slark.Server.LeanCloud.Play
         {
             if (gameServers != null)
             {
-                GameServerUrls = gameServers.Select(gs => gs.ClientConnectingAddress).ToList();
+                GameServerUrls = gameServers.Select(gs => gs.ClientConnectionUrl).ToList();
                 GameServers = gameServers;
                 foreach (var gameServer in gameServers)
                 {
@@ -65,18 +74,12 @@ namespace Slark.Server.LeanCloud.Play
             return this.OnRPC(method, rpcParamters);
         }
 
-        public override Task OnConnected(SlarkClientConnection slarkClientConnection)
-        {
-            slarkClientConnection.Client = new PlayClient();
-            return Task.FromResult(true);
-        }
-
         public Task<PlayClient> FindClientAsync(string token)
         {
             TokenClientMap.TryGetValue(token, out PlayClient client);
             if (client == null)
             {
-                client = new PlayClient();
+                client = new StandardPlayClient();
             }
             return Task.FromResult(client);
         }

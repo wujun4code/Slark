@@ -20,18 +20,15 @@ namespace Slark.Server.WebSoket
         public override IEnumerable<SlarkClientConnection> Connections => this.DecoratedServer.Connections;
 
         public override string ServerUrl { get => this.DecoratedServer.ServerUrl; set => this.DecoratedServer.ServerUrl = value; }
-        public override string ClientConnectingAddress { get => this.DecoratedServer.ClientConnectingAddress; set => this.DecoratedServer.ClientConnectingAddress = value; }
+        public override string ClientConnectionUrl { get => this.DecoratedServer.ClientConnectionUrl; set => this.DecoratedServer.ClientConnectionUrl = value; }
 
-        public SlarkWebSokcetServer(SlarkServer slarkServer, string hostingUrl = null, string websocketRoutePath = null)
+        public SlarkWebSokcetServer(SlarkServer slarkServer, string httpSchema, string hostWithPort, string websocketRoutePath = null)
             : base(slarkServer)
         {
             if (!string.IsNullOrEmpty(websocketRoutePath)) this.WebSocketRoutePath = websocketRoutePath;
-            if (string.IsNullOrEmpty(hostingUrl))
-            {
-                hostingUrl = "localhost:5000";
-            }
-            slarkServer.ServerUrl = hostingUrl;
-            slarkServer.ClientConnectingAddress = "ws://" + hostingUrl + WebSocketRoutePath;
+            slarkServer.ServerUrl = $"{httpSchema}://{hostWithPort}";
+            var wsSchema = httpSchema.ToLower().Equals("http") ? "ws" : "wss";
+            slarkServer.ClientConnectionUrl = $"{wsSchema}://{hostWithPort}{WebSocketRoutePath}";
         }
 
         public SlarkWebSokcetServer(SlarkServer slarkServer) : this(slarkServer, null, null)
@@ -154,9 +151,9 @@ namespace Slark.Server.WebSoket
             //}
         }
 
-        public override async Task OnConnected(SlarkClientConnection slarkClientConnection)
+        public override async Task<SlarkClientConnection> OnConnected(SlarkClientConnection slarkClientConnection)
         {
-            await this.DecoratedServer.OnConnected(slarkClientConnection);
+            return await this.DecoratedServer.OnConnected(slarkClientConnection);
         }
 
         public override async Task OnReceived(SlarkClientConnection slarkClientConnection, string message)

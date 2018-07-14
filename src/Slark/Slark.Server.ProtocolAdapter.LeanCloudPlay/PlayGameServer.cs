@@ -9,7 +9,12 @@ using System.Threading.Tasks;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class PlayGameServer : PlayServer
+    public class StandardPlayGameServer : PlayGameServer
+    {
+
+    }
+
+    public abstract class PlayGameServer : PlayServer
     {
         public PlayGameServer()
         {
@@ -43,20 +48,20 @@ namespace Slark.Server.LeanCloud.Play
 
         public Task<PlayRoom> CreateEmptyRoomAsync(RoomConfig config)
         {
-            var room = new PlayRoom(config);
+            var room = new StandardPlayRoom(config);
             Rooms.Add(room);
-            return Task.FromResult(room);
+            return Task.FromResult(room as PlayRoom);
         }
 
         public Task<PlayRoom> CreateWithConfigAsync(RoomConfig config, SlarkClientConnection connection)
         {
-            var player = new Player()
+            var player = new StandardPlayer()
             {
                 ClientConnection = connection,
                 ActorId = 1,
             };
 
-            var room = new PlayRoom(config)
+            var room = new StandardPlayRoom(config)
             {
                 MasterClientId = player.Client.PeerId,
                 CreatorId = player.Client.PeerId,
@@ -70,13 +75,7 @@ namespace Slark.Server.LeanCloud.Play
 
             Rooms.Add(room);
 
-            return Task.FromResult(room);
-        }
-
-        public override Task OnConnected(SlarkClientConnection slarkClientConnection)
-        {
-            slarkClientConnection.Client = new PlayClient();
-            return Task.FromResult(true);
+            return Task.FromResult(room as PlayRoom);
         }
 
         public async override Task OnDisconnected(SlarkClientConnection slarkClientConnection)

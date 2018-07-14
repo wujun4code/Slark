@@ -47,8 +47,8 @@ namespace Slark.Server.LeanCloud.Play.Protocol
                 if (tuple.Item1 != null)
                 {
                     var gs = tuple.Item1;
-                    responseBody.Add("addr", gs.ClientConnectingAddress);
-                    responseBody.Add("secureAddr", gs.ClientConnectingAddress);
+                    responseBody.Add("addr", gs.ClientConnectionUrl);
+                    responseBody.Add("secureAddr", gs.ClientConnectionUrl);
                 }
 
                 if (tuple.Item2 != null)

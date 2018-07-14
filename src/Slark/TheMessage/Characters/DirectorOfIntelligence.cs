@@ -5,6 +5,9 @@ using TheMessage.SecretMissions;
 
 namespace TheMessage.Characters
 {
+    /// <summary>
+    /// 情报处长
+    /// </summary>
     public class DirectorOfIntelligence : TMCharacter
     {
         public DirectorOfIntelligence()

@@ -7,15 +7,22 @@ using Slark.Core.Utils;
 
 namespace Slark.Core
 {
-    public class SlarkStandardServer : SlarkServer
+    public interface ISlarkClientFactory
     {
+        Task<SlarkClient> CreateAsync(SlarkClientConnection slarkClientConnection);
+    }
+    public abstract class SlarkStandardServer : SlarkServer, ISlarkClientFactory
+    {
+        public ISlarkClientFactory ClientFactory { get; set; }
+
         public SlarkStandardServer()
         {
             ConnectionList = new ConcurrentHashSet<SlarkClientConnection>();
             Pollings = new List<SlarkPollingController>();
+            ClientFactory = this;
         }
 
-        public List<SlarkPollingController> Pollings { get; set; }
+        public virtual List<SlarkPollingController> Pollings { get; set; }
         public virtual IProtocolMatcher ProtocolMatcher { get; set; }
         public void AddPolling(SlarkPollingController slarkPollingController)
         {
@@ -23,7 +30,7 @@ namespace Slark.Core
             Pollings.Add(slarkPollingController);
         }
 
-        public ConcurrentHashSet<SlarkClientConnection> ConnectionList
+        public virtual ConcurrentHashSet<SlarkClientConnection> ConnectionList
         {
             get;
             set;
@@ -31,12 +38,14 @@ namespace Slark.Core
 
         public override IEnumerable<SlarkClientConnection> Connections { get => ConnectionList; }
         public override string ServerUrl { get; set; }
-        public override string ClientConnectingAddress { get; set; }
+        public override string ClientConnectionUrl { get; set; }
 
-        public override Task OnConnected(SlarkClientConnection slarkClientConnection)
+        public override async Task<SlarkClientConnection> OnConnected(SlarkClientConnection slarkClientConnection)
         {
-            slarkClientConnection.Client = new SlarkStandardClient();
-            return Task.FromResult(true);
+            if (ClientFactory != null)
+                slarkClientConnection.Client = await ClientFactory.CreateAsync(slarkClientConnection);
+            else slarkClientConnection.Client = new SlarkStandardClient();
+            return slarkClientConnection;
         }
 
         public override Task OnDisconnected(SlarkClientConnection slarkClientConnection)
@@ -44,9 +53,9 @@ namespace Slark.Core
             return Task.FromResult(false);
         }
 
-        public override async Task OnReceived(SlarkClientConnection slarkClientConnection, string message)
+        public override async Task OnReceived(SlarkClientConnection sender, string message)
         {
-            var context = CreateContext(slarkClientConnection, message);
+            var context = CreateContext(sender, message);
 
             var processor = await MatchProtocolAsync(context);
 
@@ -107,6 +116,11 @@ namespace Slark.Core
             {
                 ConnectionList.Remove(connection);
             }
+        }
+
+        public virtual Task<SlarkClient> CreateAsync(SlarkClientConnection slarkClientConnection)
+        {
+            return Task.FromResult(new SlarkStandardClient() as SlarkClient);
         }
     }
 }

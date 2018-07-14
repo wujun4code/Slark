@@ -10,9 +10,9 @@ namespace Slark.Core
 {
     public abstract class SlarkServer
     {
-        public abstract Task OnConnected(SlarkClientConnection slarkClientConnection);
+        public abstract Task<SlarkClientConnection> OnConnected(SlarkClientConnection slarkClientConnection);
 
-        public abstract Task OnReceived(SlarkClientConnection slarkClientConnection, string message);
+        public abstract Task OnReceived(SlarkClientConnection sender, string message);
 
         public abstract Task OnDisconnected(SlarkClientConnection slarkClientConnection);
 
@@ -28,7 +28,7 @@ namespace Slark.Core
 
         public abstract string ServerUrl { get; set; }
 
-        public abstract string ClientConnectingAddress { get; set; }
+        public abstract string ClientConnectionUrl { get; set; }
 
         public abstract void AddConnectionSync(SlarkClientConnection connection);
 

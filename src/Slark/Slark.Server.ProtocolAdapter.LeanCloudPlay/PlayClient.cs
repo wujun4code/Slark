@@ -3,7 +3,7 @@ using Slark.Core;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class PlayClient : SlarkStandardClient
+    public abstract class PlayClient : SlarkClient
     {
         public PlayClient()
         {
@@ -13,5 +13,10 @@ namespace Slark.Server.LeanCloud.Play
         public string PeerId { get; set; }
 
         public string RoomId { get; set; }
+    }
+
+    public class StandardPlayClient : PlayClient
+    {
+
     }
 }

@@ -22,8 +22,8 @@ namespace Slark.Server.LeanCloud.Play.Protocol
 
             if (server is PlayLobbyServer lobby)
             {
-                lobbyRouterResponse["server"] = lobby.ClientConnectingAddress;
-                lobbyRouterResponse["secondary"] = lobby.ClientConnectingAddress;
+                lobbyRouterResponse["server"] = lobby.ClientConnectionUrl;
+                lobbyRouterResponse["secondary"] = lobby.ClientConnectionUrl;
             }
 
             return Task.FromResult(lobbyRouterResponse.ToJsonString());

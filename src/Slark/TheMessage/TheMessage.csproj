@@ -7,4 +7,7 @@
     <Folder Include="SecretMissions\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.LeanCloud.Play.csproj" />
+  </ItemGroup>
 </Project>

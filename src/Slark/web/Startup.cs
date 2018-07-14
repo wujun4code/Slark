@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using LeanCloud.Engine;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -33,23 +34,20 @@ namespace Slark.Server.ConsoleApp.NETCore
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.Use(async (context, next) => {
-            //    context.Request.EnableRewind();
-            //    await next();
-            //});
+            app.UseCloud();
+            app.UseHttpsRedirect();
+            app.UseLog();
+            var hostingUrlWithSchema = Cloud.Singleton.IsProduction ? Cloud.Singleton.GetHostingUrl() : "http://localhost:3000";
 
-            var playGameServer = new LeanCloud.Play.PlayGameServer();
+            var playGameServer = new LeanCloud.Play.StandardPlayGameServer();
 
-            playGameServer.UseWebSocket("/game");
+            playGameServer.UseWebSocket(hostingUrlWithSchema, "/game");
 
             var gameServers = new LeanCloud.Play.PlayGameServer[] { playGameServer };
 
-            var playLobbyServer = new LeanCloud.Play.PlayLobbyServer(gameServers);
+            var playLobbyServer = new LeanCloud.Play.StandardLobbyServer(gameServers);
 
-            playLobbyServer.UseWebSocket("/lobby");
-
-            //var liveBoardcastServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(new Slark.Server.LiveBroadcast.LiveBroadcastServer(), hostingUrl, "/nba");
-            //app.UseSlarkWebSokcetServer(liveBoardcastServer);
+            playLobbyServer.UseWebSocket(hostingUrlWithSchema, "/lobby");
 
             var routeBuilder = new RouteBuilder(app);
 

@@ -1,15 +1,17 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Slark.Core;
+using System;
 using System.Net.WebSockets;
 
 namespace Slark.Server.WebSoket
 {
     public static class SlarkWebSocketServerStartup
     {
-        public static SlarkWebSokcetServer UseWebSocket(this SlarkServer slarkServer, string serviceRelativeRoute)
+        public static SlarkWebSokcetServer UseWebSocket(this SlarkServer slarkServer, string hostingUrlWithSchema, string serviceRelativeRoute)
         {
-            var hostingUrl = "localhost:5000";
-            var webSocketServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(slarkServer, hostingUrl, serviceRelativeRoute);
+            var uri = new Uri(hostingUrlWithSchema);
+            var hostWithPort = uri.Port > 0 ? $"{uri.Host}:{uri.Port}" : $"{uri.Host}";
+            var webSocketServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(slarkServer, uri.Scheme, hostWithPort, serviceRelativeRoute);
             return webSocketServer;
         }
 

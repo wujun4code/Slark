@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.AspNetCore.WebSockets.Server" Version="0.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
-    <PackageReference Include="LeanCloud.Engine.Middleware.AspNetCore" Version="2018.7.13.1" />
+    <PackageReference Include="LeanCloud.Engine.Middleware.AspNetCore" Version="2018.7.14.1" />
   </ItemGroup>
 
   <ItemGroup>
