@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class StandardPlayGameServer : PlayGameServer
+    public sealed class StandardPlayGameServer : PlayGameServer
     {
 
     }
+
+
 
     public abstract class PlayGameServer : PlayServer
     {
@@ -40,20 +42,24 @@ namespace Slark.Server.LeanCloud.Play
             }
         }
 
+        /// <summary>
+        /// Create room async del.
+        /// </summary>
+        public delegate Task<PlayRoom> CreateRoomAsyncFunc(RoomConfig config);
+        public CreateRoomAsyncFunc CreateRoomAsync;
 
-        public PlayLobbyServer LobbyServer { get; set; }
+        public virtual PlayLobbyServer LobbyServer { get; set; }
 
-        public ConcurrentHashSet<PlayRoom> Rooms { get; set; }
+        public virtual ConcurrentHashSet<PlayRoom> Rooms { get; set; }
 
-
-        public Task<PlayRoom> CreateEmptyRoomAsync(RoomConfig config)
+        public virtual Task<PlayRoom> CreateEmptyRoomAsync(RoomConfig config)
         {
             var room = new StandardPlayRoom(config);
             Rooms.Add(room);
             return Task.FromResult(room as PlayRoom);
         }
 
-        public Task<PlayRoom> CreateWithConfigAsync(RoomConfig config, SlarkClientConnection connection)
+        public virtual Task<PlayRoom> CreateWithConfigAsync(RoomConfig config, SlarkClientConnection connection)
         {
             var player = new StandardPlayer()
             {
@@ -112,14 +118,14 @@ namespace Slark.Server.LeanCloud.Play
             await base.OnDisconnected(slarkClientConnection);
         }
 
-        public Task<PlayRoom> FindRoomByClientAsync(PlayClient client)
+        public virtual Task<PlayRoom> FindRoomByClientAsync(PlayClient client)
         {
             if (string.IsNullOrEmpty(client.RoomId)) return Task.FromResult<PlayRoom>(null);
             var room = Rooms.FirstOrDefault(r => r.Id == client.RoomId);
             return Task.FromResult<PlayRoom>(room);
         }
 
-        public Task<PlayRoom> FindRoomMatchRequest(RoomJoinRequest joinRequest)
+        public virtual Task<PlayRoom> FindRoomMatchRequest(RoomJoinRequest joinRequest)
         {
             var room = Rooms.FirstOrDefault(r =>
             {

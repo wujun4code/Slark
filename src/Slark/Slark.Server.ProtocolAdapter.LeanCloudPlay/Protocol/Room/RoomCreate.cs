@@ -25,11 +25,11 @@ namespace Slark.Server.LeanCloud.Play.Protocol
 
             var roomConfig = JsonConvert.DeserializeObject<RoomConfig>(context.Message.MetaText);
 
-            if (context.Server is PlayGameServer game)
+            if (context.Server is PlayGameServer gameServer)
             {
                 if (context.Sender.Client is PlayClient client)
                 {
-                    var room = await game.CreateWithConfigAsync(roomConfig, context.Sender);
+                    var room = await gameServer.CreateWithConfigAsync(roomConfig, context.Sender);
 
                     responseBody.Add("cid", room.Id);
                     responseBody.Add("visible", room.IsVisible);

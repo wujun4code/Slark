@@ -7,19 +7,21 @@ using Slark.Core.Utils;
 
 namespace Slark.Core
 {
-    public interface ISlarkClientFactory
+    public delegate Task<SlarkClient> CreateClientAsyncFunc(SlarkClientConnection slarkClientConnection);
+
+    public abstract class SlarkStandardServer : SlarkServer
     {
-        Task<SlarkClient> CreateAsync(SlarkClientConnection slarkClientConnection);
-    }
-    public abstract class SlarkStandardServer : SlarkServer, ISlarkClientFactory
-    {
-        public ISlarkClientFactory ClientFactory { get; set; }
+        public CreateClientAsyncFunc CreateClientAsync { get; set; }
 
         public SlarkStandardServer()
         {
             ConnectionList = new ConcurrentHashSet<SlarkClientConnection>();
             Pollings = new List<SlarkPollingController>();
-            ClientFactory = this;
+
+            CreateClientAsync = (connection) =>
+            {
+                return Task.FromResult(new SlarkStandardClient() { } as SlarkClient);
+            };
         }
 
         public virtual List<SlarkPollingController> Pollings { get; set; }
@@ -42,9 +44,7 @@ namespace Slark.Core
 
         public override async Task<SlarkClientConnection> OnConnected(SlarkClientConnection slarkClientConnection)
         {
-            if (ClientFactory != null)
-                slarkClientConnection.Client = await ClientFactory.CreateAsync(slarkClientConnection);
-            else slarkClientConnection.Client = new SlarkStandardClient();
+            slarkClientConnection.Client = await CreateClientAsync(slarkClientConnection);
             return slarkClientConnection;
         }
 
@@ -116,11 +116,6 @@ namespace Slark.Core
             {
                 ConnectionList.Remove(connection);
             }
-        }
-
-        public virtual Task<SlarkClient> CreateAsync(SlarkClientConnection slarkClientConnection)
-        {
-            return Task.FromResult(new SlarkStandardClient() as SlarkClient);
         }
     }
 }

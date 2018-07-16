@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Slark.Server.LeanCloud.Play;
 using TheMessage.Extensions;
 
 namespace TheMessage
 {
-    public class TMPlayer
+    public class TMPlayer : Player
     {
         public TMPlayer()
         {

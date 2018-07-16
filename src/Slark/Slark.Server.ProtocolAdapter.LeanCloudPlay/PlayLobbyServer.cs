@@ -9,9 +9,9 @@ using System.Collections.Concurrent;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class StandardLobbyServer : PlayLobbyServer
+    public sealed class StandardPlayLobbyServer : PlayLobbyServer
     {
-        public StandardLobbyServer(IEnumerable<PlayGameServer> gameServers = null)
+        public StandardPlayLobbyServer(IEnumerable<PlayGameServer> gameServers = null)
             : base(gameServers)
         {
 
@@ -20,13 +20,13 @@ namespace Slark.Server.LeanCloud.Play
 
     public abstract class PlayLobbyServer : PlayServer
     {
-        public IDictionary<string, IPlayRPCHandler> RPCHandlers { get; set; }
+        public virtual IDictionary<string, IPlayRPCHandler> RPCHandlers { get; set; }
 
-        public ConcurrentDictionary<string, PlayClient> TokenClientMap { get; set; }
+        public virtual ConcurrentDictionary<string, PlayClient> TokenClientMap { get; set; }
 
-        public List<string> GameServerUrls { get; set; }
+        public virtual List<string> GameServerUrls { get; set; }
 
-        public IEnumerable<PlayGameServer> GameServers { get; set; }
+        public virtual IEnumerable<PlayGameServer> GameServers { get; set; }
 
         public PlayLobbyServer(IEnumerable<PlayGameServer> gameServers = null)
         {
@@ -60,7 +60,7 @@ namespace Slark.Server.LeanCloud.Play
             TokenClientMap = new ConcurrentDictionary<string, PlayClient>();
         }
 
-        public void AddRPCHandler(IPlayRPCHandler playRouteHandler)
+        public virtual void AddRPCHandler(IPlayRPCHandler playRouteHandler)
         {
             RPCHandlers.Add(playRouteHandler.Method, playRouteHandler);
         }
@@ -74,7 +74,7 @@ namespace Slark.Server.LeanCloud.Play
             return this.OnRPC(method, rpcParamters);
         }
 
-        public Task<PlayClient> FindClientAsync(string token)
+        public virtual Task<PlayClient> FindClientAsync(string token)
         {
             TokenClientMap.TryGetValue(token, out PlayClient client);
             if (client == null)
@@ -84,7 +84,7 @@ namespace Slark.Server.LeanCloud.Play
             return Task.FromResult(client);
         }
 
-        public async Task<Tuple<PlayGameServer, PlayRoom>> MatchAsync(RoomJoinRequest joinRequest)
+        public virtual async Task<Tuple<PlayGameServer, PlayRoom>> MatchAsync(RoomJoinRequest joinRequest)
         {
             foreach (var gameServer in GameServers)
             {
@@ -110,7 +110,7 @@ namespace Slark.Server.LeanCloud.Play
             return await RandomMatchAsync();
         }
 
-        public Task<Tuple<PlayGameServer, PlayRoom>> RandomMatchAsync()
+        public virtual Task<Tuple<PlayGameServer, PlayRoom>> RandomMatchAsync()
         {
             var randomGameServer = GameServers.RandomOne();
             var randomRoom = randomGameServer.Rooms.RandomOne();

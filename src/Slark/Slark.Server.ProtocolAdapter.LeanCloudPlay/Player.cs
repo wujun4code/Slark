@@ -6,10 +6,11 @@ using Slark.Core;
 
 namespace Slark.Server.LeanCloud.Play
 {
-    public class StandardPlayer : Player
+    public sealed class StandardPlayer : Player
     {
 
     }
+
     public abstract class Player
     {
         public PlayClient Client

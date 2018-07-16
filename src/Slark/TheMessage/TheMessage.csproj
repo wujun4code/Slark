@@ -6,8 +6,12 @@
     <Folder Include="Characters\" />
     <Folder Include="SecretMissions\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Protocols\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.LeanCloud.Play.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="TMServer.cs" />
   </ItemGroup>
 </Project>

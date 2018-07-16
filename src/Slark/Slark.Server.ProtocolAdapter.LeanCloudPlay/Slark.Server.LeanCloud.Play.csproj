@@ -12,9 +12,13 @@
     <Compile Remove="Protocol\Validator\EmptyDataPacket.cs" />
     <Compile Remove="Protocol\Room\MemberDisconnect.cs" />
     <Compile Remove="Protocol\Hook\IPlayCustomHook.cs" />
+    <Compile Remove="PlayHost.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Protocol\RPC\" />
     <Folder Include="Protocol\Plugin\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="IPlayServerBuilder.config" />
   </ItemGroup>
 </Project>

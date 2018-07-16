@@ -12,7 +12,7 @@ using Slark.Core;
 namespace Slark.Server.LeanCloud.Play
 {
 
-    public class StandardPlayRoom : PlayRoom
+    public sealed class StandardPlayRoom : PlayRoom
     {
         public StandardPlayRoom(RoomConfig config) : base(config)
         {
@@ -22,6 +22,11 @@ namespace Slark.Server.LeanCloud.Play
 
     public abstract class PlayRoom
     {
+        public PlayRoom()
+        {
+            
+        }
+        
         public PlayRoom(RoomConfig config)
         {
             Config = config;
@@ -173,7 +178,7 @@ namespace Slark.Server.LeanCloud.Play
             return BroadcastAsync(notice);
         }
 
-        public Task<Tuple<PlayResponse, PlayNotice>> NewPlayerJoinAsync(PlayRequest request, SlarkClientConnection connection)
+        public virtual Task<Tuple<PlayResponse, PlayNotice>> NewPlayerJoinAsync(PlayRequest request, SlarkClientConnection connection)
         {
             var newPlayer = new StandardPlayer()
             {
