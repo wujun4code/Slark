@@ -15,7 +15,6 @@
     <Folder Include="Utils\Protocol\" />
     <Folder Include="Utils\Collections\" />
     <Folder Include="SubClassing\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Utils\Protocol\:Code:Slark:src:Slark:Slark.Core:Utils:Protocol:DirectProtocol.cs" />

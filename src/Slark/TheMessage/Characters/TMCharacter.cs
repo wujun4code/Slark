@@ -1,8 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TheMessage
 {
+    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
+    public sealed class CharacterNameAttribute : Attribute
+    {
+        public CharacterNameAttribute(string name)
+        {
+            Name = name;
+        }
+        public string Name { get; internal set; }
+    }
+
+    [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
+    public sealed class SpellNameAttribute : Attribute
+    {
+        public SpellNameAttribute(string name, string description)
+        {
+            Name = name;
+            Description = description;
+        }
+        public string Name { get; internal set; }
+        public string Description { get; internal set; }
+    }
+
     public abstract class TMCharacter : ITMSecretMission
     {
         public ITMSecretMission Mission { get; set; }
@@ -11,5 +34,11 @@ namespace TheMessage
         {
             return this.Mission.IfWon(receiving, received, dying, winning);
         }
+
+        public string HumanizeDescription { get; set; }
+
+        public abstract Task<string> StructuredDescriptionAsync();
+
+        public byte ID { get; set; }
     }
 }

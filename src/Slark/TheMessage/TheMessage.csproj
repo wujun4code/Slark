@@ -5,7 +5,6 @@
   <ItemGroup>
     <Folder Include="Characters\" />
     <Folder Include="SecretMissions\" />
-    <Folder Include="Extensions\" />
     <Folder Include="Protocols\" />
   </ItemGroup>
   <ItemGroup>
