@@ -9,6 +9,7 @@ namespace TheMessage
     {
         public TMCamp()
         {
+
         }
         public TMCampCategory CampCategory { get; set; }
         public enum TMCampCategory
