@@ -36,7 +36,7 @@ namespace Slark.Server.WebSoket
                 var connection = await slarkWebSokcetServer.OnWebSocketConnected(context, webSocket);
                 if (connection != null)
                 {
-                    await slarkWebSokcetServer.OnWebSocketInvoked(connection);
+                    await slarkWebSokcetServer.OnWebSocketInvoked(context, connection);
                 }
                 else
                 {

@@ -26,18 +26,18 @@ namespace TheMessage
         public string Description { get; internal set; }
     }
 
-    public abstract class TMCharacter : ITMSecretMission
+    public abstract class TMCharacter
     {
         public ITMSecretMission Mission { get; set; }
+
+        public abstract string ScreenName { get; set; }
 
         public virtual bool IfWon(TMIntelligence receiving, IEnumerable<TMIntelligence> received, TMPlayer dying, TMPlayer winning)
         {
             return this.Mission.IfWon(receiving, received, dying, winning);
         }
 
-        public string HumanizeDescription { get; set; }
-
-        public abstract Task<string> StructuredDescriptionAsync();
+        public virtual IEnumerable<TMSpell> Spells { get; set; }
 
         public byte ID { get; set; }
     }

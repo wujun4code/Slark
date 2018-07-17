@@ -6,6 +6,7 @@
     <Folder Include="Characters\" />
     <Folder Include="SecretMissions\" />
     <Folder Include="Protocols\" />
+    <Folder Include="Spells\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.LeanCloud.Play.csproj" />

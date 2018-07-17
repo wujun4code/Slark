@@ -15,6 +15,8 @@ namespace Slark.Server.WebSoket
     {
         public string WebSocketRoutePath { get; set; } = "/ws";
 
+        public static bool ToggleLog { get; set; }
+
         protected int BufferSize { get => 1024 * 4; }
 
         public override IEnumerable<SlarkClientConnection> Connections => this.DecoratedServer.Connections;
@@ -55,7 +57,7 @@ namespace Slark.Server.WebSoket
             await OnDisconnected(connection as SlarkClientConnection);
         }
 
-        public async Task OnWebSocketInvoked(SlarkWebSocketClientConnection connection)
+        public async Task OnWebSocketInvoked(HttpContext context, SlarkWebSocketClientConnection connection)
         {
             try
             {
@@ -81,6 +83,13 @@ namespace Slark.Server.WebSoket
                                 using (var reader = new StreamReader(ms, Encoding.UTF8))
                                 {
                                     string message = await reader.ReadToEndAsync().ConfigureAwait(false);
+                                    if (ToggleLog)
+                                    {
+                                        var request = context.Request;
+                                        string log = $"{request.Method} {request.Scheme}://{request.Host}{request.Path} {message}";
+                                        Console.WriteLine(log);
+                                    }
+
                                     await OnReceived(connection, message);
                                 }
                             }
@@ -156,9 +165,9 @@ namespace Slark.Server.WebSoket
             return await this.DecoratedServer.OnConnected(slarkClientConnection);
         }
 
-        public override async Task OnReceived(SlarkClientConnection slarkClientConnection, string message)
+        public override async Task OnReceived(SlarkClientConnection sender, string message)
         {
-            await this.DecoratedServer.OnReceived(slarkClientConnection, message);
+            await this.DecoratedServer.OnReceived(sender, message);
         }
 
         public override async Task OnDisconnected(SlarkClientConnection slarkClientConnection)

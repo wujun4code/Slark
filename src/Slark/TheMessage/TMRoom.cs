@@ -52,7 +52,7 @@ namespace TheMessage
             var players = Players.ToArray();
             for (int i = 0; i < chunks.Length; i++)
             {
-                await players[i].SendAsync(chunks[i]);
+                await players[i].AlloctAsync(chunks[i]);
             }
         }
 

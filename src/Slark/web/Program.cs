@@ -34,6 +34,8 @@ namespace Slark.Server.ConsoleApp.NETCore
 
             app.UseWebSockets(webSocketOptions);
 
+            app.UseLog();
+
             var hostingUrlWithSchema = Cloud.Singleton.IsProduction ? Cloud.Singleton.GetHostingUrl() : "http://localhost:3000";
 
             var playGameServer = new TMGameServer();
