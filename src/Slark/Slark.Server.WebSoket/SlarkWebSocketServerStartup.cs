@@ -13,7 +13,7 @@ namespace Slark.Server.WebSoket
             var hostWithPort = uri.Port > 0 ? $"{uri.Host}:{uri.Port}" : $"{uri.Host}";
             var webSocketServer = new Slark.Server.WebSoket.SlarkWebSokcetServer(slarkServer, uri.Scheme, hostWithPort, serviceRelativeRoute);
             return webSocketServer;
-        }
+        } 
 
         public static IApplicationBuilder UseSlarkWebSokcetServer(this IApplicationBuilder app, SlarkWebSokcetServer slarkWebSokcetServer)
         {

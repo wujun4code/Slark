@@ -14,8 +14,6 @@ namespace Slark.Server.LeanCloud.Play
 
     }
 
-
-
     public abstract class PlayGameServer : PlayServer
     {
         public PlayGameServer()

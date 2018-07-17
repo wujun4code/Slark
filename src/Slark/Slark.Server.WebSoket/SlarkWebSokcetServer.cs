@@ -15,7 +15,7 @@ namespace Slark.Server.WebSoket
     {
         public string WebSocketRoutePath { get; set; } = "/ws";
 
-        public static bool ToggleLog { get; set; }
+        public bool ToggleLog { get; set; }
 
         protected int BufferSize { get => 1024 * 4; }
 

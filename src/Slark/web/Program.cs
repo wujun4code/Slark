@@ -21,10 +21,16 @@ namespace Slark.Server.ConsoleApp.NETCore
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                   .UseCloud(ConfigAppCloud)
+                   .UseCloud(ConfigCloud, ConfigApp)
                    .Build();
 
-        public static void ConfigAppCloud(IApplicationBuilder app, Cloud cloud)
+        public static void ConfigCloud(Cloud cloud)
+        {
+            cloud.UseLog();
+            cloud.UseHttpsRedirect();
+        }
+
+        public static void ConfigApp(IApplicationBuilder app)
         {
             var webSocketOptions = new WebSocketOptions()
             {
@@ -49,7 +55,7 @@ namespace Slark.Server.ConsoleApp.NETCore
             var playLobbyServer = new TMLobby(gameServers).Inject<TMLobby>();
 
             var playLobbyWebSocketServer = playLobbyServer.UseWebSocket(hostingUrlWithSchema, "/lobby");
-
+            playLobbyWebSocketServer.ToggleLog = true;
             app.UseSlarkWebSokcetServer(playLobbyWebSocketServer);
 
             var routeBuilder = new RouteBuilder(app);

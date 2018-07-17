@@ -12,6 +12,8 @@ namespace Slark.Server.WebSoket
     {
         public WebSocket WebSocket { get; set; }
 
+        public SlarkWebSokcetServer Server { get; set; }
+
         public SlarkWebSocketClientConnection(WebSocket webSocket)
         {
             WebSocket = webSocket;
@@ -20,10 +22,7 @@ namespace Slark.Server.WebSoket
 
         public override async Task SendAsync(string message)
         {
-            if (SlarkWebSokcetServer.ToggleLog)
-            {
-                Console.WriteLine(message);
-            }
+            if (Server.ToggleLog) Console.WriteLine(message);
             if (WebSocket.State != WebSocketState.Open) return;
             var arr = Encoding.UTF8.GetBytes(message);
 
