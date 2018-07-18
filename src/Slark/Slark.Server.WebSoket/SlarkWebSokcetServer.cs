@@ -40,7 +40,7 @@ namespace Slark.Server.WebSoket
 
         public SlarkWebSocketClientConnection FromWebSocket(HttpContext context, WebSocket webSocket)
         {
-            return new SlarkWebSocketClientConnection(webSocket);
+            return new SlarkWebSocketClientConnection(this, webSocket);
         }
 
         public async Task<SlarkWebSocketClientConnection> OnWebSocketConnected(HttpContext context, WebSocket webSocket)
@@ -132,13 +132,10 @@ namespace Slark.Server.WebSoket
                 {
                     await this.OnDisconnected(connection);
                 }
+
+                Console.WriteLine(ex.StackTrace);
                 Console.WriteLine(ex.Message);
-                Debug.WriteLine(ex.Message);
-                Trace.WriteLine(ex.Message);
             }
-
-
-
 
             //var buffer = new byte[BufferSize];
 

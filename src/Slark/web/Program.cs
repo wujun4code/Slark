@@ -21,7 +21,7 @@ namespace Slark.Server.ConsoleApp.NETCore
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                   .UseCloud(ConfigCloud, ConfigApp)
+                   .UseCloud(ConfigCloud, ConfigAppCloud)
                    .Build();
 
         public static void ConfigCloud(Cloud cloud)
@@ -30,7 +30,7 @@ namespace Slark.Server.ConsoleApp.NETCore
             cloud.UseHttpsRedirect();
         }
 
-        public static void ConfigApp(IApplicationBuilder app)
+        public static void ConfigAppCloud(IApplicationBuilder app, Cloud cloud)
         {
             var webSocketOptions = new WebSocketOptions()
             {
@@ -42,7 +42,7 @@ namespace Slark.Server.ConsoleApp.NETCore
 
             app.UseLog();
 
-            var hostingUrlWithSchema = Cloud.Singleton.IsProduction ? Cloud.Singleton.GetHostingUrl() : "http://localhost:3000";
+            var hostingUrlWithSchema = cloud.IsProduction ? cloud.GetHostingUrl() : "http://localhost:3000";
 
             var playGameServer = new TMGameServer();
 

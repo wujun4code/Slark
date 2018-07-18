@@ -14,8 +14,9 @@ namespace Slark.Server.WebSoket
 
         public SlarkWebSokcetServer Server { get; set; }
 
-        public SlarkWebSocketClientConnection(WebSocket webSocket)
+        public SlarkWebSocketClientConnection(SlarkWebSokcetServer server, WebSocket webSocket)
         {
+            Server = server;
             WebSocket = webSocket;
             Id = Guid.NewGuid().ToString();
         }
