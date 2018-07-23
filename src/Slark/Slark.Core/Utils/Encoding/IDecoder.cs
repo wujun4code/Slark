@@ -5,6 +5,8 @@ namespace Slark.Core.Utils
 {
     public interface ISlarkDecoder
     {
-        Task<object> Decode(string message);
+        Task<object> DecodeAsync(string message);
+
+        T Decode<T>(string message);
     }
 }

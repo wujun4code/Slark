@@ -5,9 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Utils\APIClient\" />
     <Folder Include="Utils\Encoding\" />
     <Folder Include="Utils\Http\" />
@@ -15,10 +12,16 @@
     <Folder Include="Utils\Protocol\" />
     <Folder Include="Utils\Collections\" />
     <Folder Include="SubClassing\" />
+    <Folder Include="Utils\Random\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Utils\Protocol\:Code:Slark:src:Slark:Slark.Core:Utils:Protocol:DirectProtocol.cs" />
     <Compile Remove="Utils\Protocol\:Code:Slark:src:Slark:Slark.Core:Utils:Protocol:IProtocol.cs" />
     <Compile Remove="Utils\Protocol\IMessageHandler.cs" />
+    <Compile Remove="Utils\Encoding\EnDecoder.cs" />
+    <Compile Remove="Utils\Encoding\JsonDecoder.cs" />
+    <Compile Remove="Utils\Encoding\JsonEncoder.cs" />
+    <Compile Remove="Utils\Polling\JsonPollingController.cs" />
+    <Compile Remove="Utils\Polling\SlarkGenericJsonPollingController.cs" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Slark.Core;
+using Slark.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
@@ -18,7 +19,7 @@ namespace Slark.Server.WebSoket
         {
             Server = server;
             WebSocket = webSocket;
-            Id = Guid.NewGuid().ToString();
+            Id = StringRandom.RandomHexString(16);
         }
 
         public override async Task SendAsync(string message)

@@ -1,12 +1,10 @@
 ﻿using System;
-using Slark.Server.LeanCloud.Play;
+using Slark.Core;
 
 namespace TheMessage
 {
-    public class TMGameServer : PlayGameServer
+    public class TMGameServer : SlarkStandardServer
     {
-        public TMGameServer()
-        {
-        }
+        
     }
 }

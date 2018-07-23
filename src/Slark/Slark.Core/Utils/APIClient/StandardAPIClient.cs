@@ -3,14 +3,12 @@ namespace Slark.Core.Utils
 {
     public class SlarkStandardAPIClient : SlarkAPIClient
     {
-        public SlarkStandardAPIClient(IEnDecoder endecoder, ISlarkHttpClient httpClient)
+        public SlarkStandardAPIClient(ISlarkDecoder decoder, ISlarkEncoder encoder, ISlarkHttpClient httpClient)
         {
-            EnDecoder = endecoder;
+            Decoder = decoder;
+            Encoder = encoder;
             HttpClient = httpClient;
         }
-
-        public override IEnDecoder EnDecoder { get; set; }
-        public override ISlarkHttpClient HttpClient { get; set; }
     }
 
 }

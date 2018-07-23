@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
-using Slark.Server.LeanCloud.Play;
 using Slark.Server.WebSoket;
 using TheMessage;
 using Slark.Core.Extensions;
@@ -44,17 +43,12 @@ namespace Slark.Server.ConsoleApp.NETCore
 
             var hostingUrlWithSchema = cloud.IsProduction ? cloud.GetHostingUrl() : "http://localhost:3000";
 
-            var playGameServer = new TMGameServer();
+            TM.Init();
 
-            var playGameWebSocketServer = playGameServer.UseWebSocket(hostingUrlWithSchema, "/game");
-
-            app.UseSlarkWebSokcetServer(playGameWebSocketServer);
-
-            var gameServers = new PlayGameServer[] { playGameServer };
-
-            var playLobbyServer = new TMLobby(gameServers).Inject<TMLobby>();
+            var playLobbyServer = new TMLobby().Inject<TMLobby>();
 
             var playLobbyWebSocketServer = playLobbyServer.UseWebSocket(hostingUrlWithSchema, "/lobby");
+
             playLobbyWebSocketServer.ToggleLog = true;
             app.UseSlarkWebSokcetServer(playLobbyWebSocketServer);
 

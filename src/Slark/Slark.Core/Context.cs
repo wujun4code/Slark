@@ -26,12 +26,16 @@ namespace Slark.Core
 
         public virtual Task ReplyAsync()
         {
+            if (string.IsNullOrEmpty(Response))
+            {
+                Response = "";
+            }
             return Sender.SendAsync(Response);
         }
 
         public abstract bool HasNotice
         {
-            get;set;
+            get; set;
         }
     }
 

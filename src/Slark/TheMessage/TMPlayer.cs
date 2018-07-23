@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using Slark.Server.LeanCloud.Play;
+using Slark.Core;
 using TheMessage.Extensions;
 
 namespace TheMessage
 {
-    public class TMPlayer : Player
+    public class TMPlayer
     {
         public TMPlayer()
         {
+
         }
+
+        public TMPlayer(SlarkClientConnection connection)
+        {
+            ClientConnection = connection;
+        }
+        public SlarkClientConnection ClientConnection { get; set; }
 
         public TMCharacter Charater { get; set; }
 

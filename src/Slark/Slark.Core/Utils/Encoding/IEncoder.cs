@@ -6,6 +6,7 @@ namespace Slark.Core.Utils
 {
     public interface ISlarkEncoder
     {
-        Task<string> Encode(object obj);
+        Task<string> EncodeAsync(object obj);
+        string Encode(object obj);
     }
 }

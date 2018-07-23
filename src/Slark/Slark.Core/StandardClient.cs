@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Slark.Core
 {
-    public class SlarkStandardClient: SlarkClient
+    public sealed class SlarkStandardClient : SlarkClient
     {
 
     }

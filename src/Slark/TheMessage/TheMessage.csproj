@@ -7,11 +7,17 @@
     <Folder Include="SecretMissions\" />
     <Folder Include="Protocols\" />
     <Folder Include="Spells\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Slark.Server.ProtocolAdapter.LeanCloudPlay\Slark.Server.LeanCloud.Play.csproj" />
+    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="TMServer.cs" />
+    <Compile Remove="Protocols\TMConnectRequest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Slark.Core\Slark.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LeanCloud.Storage" Version="2018.7.17.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 </Project>

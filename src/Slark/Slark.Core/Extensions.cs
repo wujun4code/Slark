@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Runtime;
-using System.Collections;
 
 namespace Slark.Core
 {
@@ -12,10 +9,7 @@ namespace Slark.Core
     {
         public static string ToJsonString(this IDictionary<string, object> source)
         {
-            string json = JsonConvert.SerializeObject(source, new JsonSerializerSettings()
-            {
-
-            });
+            string json = SlarkCorePlugins.Singleton.Encoder.Encode(source);
             return json;
         }
 
@@ -26,7 +20,7 @@ namespace Slark.Core
 
         public static IDictionary<string, object> ToDictionary(this string obj)
         {
-            var values = JsonConvert.DeserializeObject<Dictionary<string, object>>(obj);
+            var values = SlarkCorePlugins.Singleton.Decoder.Decode<Dictionary<string, object>>(obj);
             return values;
         }
 

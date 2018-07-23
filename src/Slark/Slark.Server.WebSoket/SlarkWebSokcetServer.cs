@@ -132,6 +132,10 @@ namespace Slark.Server.WebSoket
                 {
                     await this.OnDisconnected(connection);
                 }
+                if (ex.Source == "Microsoft.AspNetCore.WebSockets.Protocol" && ex.Message == "Unexpected end of stream")
+                {
+                    await this.OnDisconnected(connection);
+                }
 
                 Console.WriteLine(ex.StackTrace);
                 Console.WriteLine(ex.Message);
@@ -184,6 +188,7 @@ namespace Slark.Server.WebSoket
 
         public override void RemoveConnectionSync(SlarkClientConnection connection)
         {
+            if (ToggleLog) Console.WriteLine($"connection disconnected with id:{connection.Id}");
             this.DecoratedServer.RemoveConnectionSync(connection);
         }
     }

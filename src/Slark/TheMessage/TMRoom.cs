@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Slark.Server.LeanCloud.Play;
-using Slark.Server.LeanCloud.Play.Protocol;
 using Slark.Core.Extensions;
 using System.Linq;
 using TheMessage.Extensions;
@@ -11,7 +9,10 @@ namespace TheMessage
 {
     public class TMGameMode
     {
-        public byte Total { get; set; }
+        public byte Total
+        {
+            get => (byte)(Blue + Red + Independent);
+        }
 
         public byte Blue { get; set; }
 
@@ -21,7 +22,7 @@ namespace TheMessage
     }
 
 
-    public class TMRoom : PlayRoom
+    public class TMRoom
     {
         public TMRoom()
         {
@@ -44,9 +45,12 @@ namespace TheMessage
 
         public TMGameMode GameMode { get; set; }
         public IEnumerable<TMCharacter> InitCharacters { get; set; }
+        public IEnumerable<TMPlayer> Players { get; set; }
+        public string Id { get; set; }
+
         public async Task InitAllotCharactersAsync(byte initCharacterCountPerPlayer = 2)
         {
-            var randomCount = Players.Count * initCharacterCountPerPlayer;
+            var randomCount = Players.Count() * initCharacterCountPerPlayer;
             var picked = InitCharacters.PickRandom(randomCount);
             var chunks = picked.ChunkBy(initCharacterCountPerPlayer).ToArray();
             var players = Players.ToArray();
@@ -66,10 +70,5 @@ namespace TheMessage
 
         //}
 
-
-        public TMRoom(RoomConfig config) : base(config)
-        {
-
-        }
     }
 }

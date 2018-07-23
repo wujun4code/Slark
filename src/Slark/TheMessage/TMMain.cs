@@ -1,12 +1,19 @@
 ﻿using System;
+using Slark.Core;
 
 namespace TheMessage
 {
-    public class TMMain
+    public static class TM
     {
         public static void Init()
         {
-            
+            SetupPlugins();
+        }
+
+        public static void SetupPlugins()
+        {
+            SlarkCorePlugins.Singleton.Decoder = new LeanCloudJsonDecoder();
+            SlarkCorePlugins.Singleton.Encoder = new LeanCloudJsonEncoder();
         }
     }
 }

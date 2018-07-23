@@ -5,7 +5,9 @@ namespace Slark.Core.Utils
 {
     public interface ISlarkAPIClient
     {
-        IEnDecoder EnDecoder { get; set; }
+        ISlarkDecoder Decoder { get; set; }
+
+        ISlarkEncoder Encoder { get; set; }
 
         ISlarkHttpClient HttpClient { get; set; }
 
