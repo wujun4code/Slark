@@ -12,7 +12,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public override string Command { get; set; } = "conv";
         public override string Operation { get; set; } = "start";
 
-        public override Task<string> ResponseAsync(SlarkContext context)
+        public override Task ExecuteAsync(SlarkContext context)
         {
             var request = context.Message as PlayRequest;
 

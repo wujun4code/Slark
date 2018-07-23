@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Slark.Core;
 using Slark.Core.Protocol;
 
@@ -33,5 +34,6 @@ namespace TheMessage
         public int CommandId { get; set; }
 
         public string MetaText { get; set; }
+
     }
 }

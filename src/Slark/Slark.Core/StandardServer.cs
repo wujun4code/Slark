@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Slark.Core.Protocol;
 using Slark.Core.Utils;
+using Slark.Core.Utils.Protocol;
 
 namespace Slark.Core
 {
@@ -59,14 +60,12 @@ namespace Slark.Core
 
             var processor = await MatchProtocolAsync(context);
 
-            context.Response = await processor.ResponseAsync(context);
+            await processor.ExecuteAsync(context);
 
             await context.ReplyAsync();
 
             if (context.HasNotice)
             {
-                context.Receivers = await processor.GetTargetsAsync(context);
-                context.Notice = await processor.NotifyAsync(context);
                 await context.PushNoticeAsync();
             }
         }

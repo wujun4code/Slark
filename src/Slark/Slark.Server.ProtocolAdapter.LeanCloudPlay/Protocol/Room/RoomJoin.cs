@@ -11,7 +11,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public override string Command { get; set; } = "conv";
         public override string Operation { get; set; } = "add";
 
-        public async override Task<string> ResponseAsync( SlarkContext context)
+        public async override Task ExecuteAsync( SlarkContext context)
         {
             var request = context.Message as PlayRequest;
 
@@ -65,10 +65,9 @@ namespace Slark.Server.LeanCloud.Play.Protocol
                 var response = new PlayResponse(responseBody);
                 response.Timestamplize();
                 response.SerializeBody();
-                return response.MetaText;
-            }
 
-            return await base.ResponseAsync(context);
+                context.Response = response.MetaText;
+            }
         }
     }
 }

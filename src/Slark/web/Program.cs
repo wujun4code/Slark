@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Slark.Server.WebSoket;
 using TheMessage;
 using Slark.Core.Extensions;
+using TheMessage.Extensions;
 
 namespace Slark.Server.ConsoleApp.NETCore
 {
@@ -45,7 +46,7 @@ namespace Slark.Server.ConsoleApp.NETCore
 
             TM.Init();
 
-            var playLobbyServer = new TMLobby().Inject<TMLobby>();
+            var playLobbyServer = new TMLobby().UseRpc().Inject<TMLobby>();
 
             var playLobbyWebSocketServer = playLobbyServer.UseWebSocket(hostingUrlWithSchema, "/lobby");
 

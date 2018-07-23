@@ -12,7 +12,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         public override string Command { get; set; } = "conv";
         public override string Operation { get; set; } = "start";
 
-        public override async Task<string> ResponseAsync(SlarkContext context)
+        public override async Task ExecuteAsync(SlarkContext context)
         {
             var request = context.Message as PlayRequest;
 
@@ -46,8 +46,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol
                     responseBody.Add("members", room.MembersJsonFormatting);
                 }
             }
-
-            return responseBody.ToJsonString();
+            context.Response = responseBody.ToJsonString();
         }
     }
 }

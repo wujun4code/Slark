@@ -23,6 +23,7 @@ namespace TheMessage
 
         public override Task ReplyAsync()
         {
+            if (string.IsNullOrEmpty(Response)) Response = "{}";
             if (Message is TMJsonRequest request)
             {
                 var resJson = Response.ToTMDictionary();

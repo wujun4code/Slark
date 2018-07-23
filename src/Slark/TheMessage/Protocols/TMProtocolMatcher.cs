@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Slark.Core;
 using Slark.Core.Protocol;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+
 namespace TheMessage.Protocols
 {
-    public delegate Task ProcessAsync(SlarkContext context);
-
     public class TMProtocolMatcher : SlarkStandardProtocolMatcher
     {
         public override Task<ISlarkProtocol> FindAsync(SlarkContext context)
@@ -25,8 +25,19 @@ namespace TheMessage.Protocols
                             var functionAttribute = (RequestAttribute)requestAttributes[0];
                             if (functionAttribute.Match(request))
                             {
-                                ProcessAsync del = method.IsStatic ? (ProcessAsync)Delegate.CreateDelegate(typeof(ProcessAsync), method) : (ProcessAsync)Delegate.CreateDelegate(typeof(ProcessAsync), context.Server, method);
-                                return Task.FromResult(new TMSlarkProtocol(del) as ISlarkProtocol);
+                                RpcFunctionDelegate del = method.IsStatic ? (RpcFunctionDelegate)Delegate.CreateDelegate(typeof(RpcFunctionDelegate), method) : (RpcFunctionDelegate)Delegate.CreateDelegate(typeof(RpcFunctionDelegate), context.Server, method);
+                                return Task.FromResult(new StandardRpcFunctionHandler(del) as ISlarkProtocol);
+                            }
+                        }
+                        var rpcAttributes = method.GetCustomAttributes(typeof(RpcAttribute), false);
+
+                        if (requestAttributes.Length == 1)
+                        {
+                            var rpcAttribute = (RpcAttribute)rpcAttributes[0];
+                            if (rpcAttribute.Match(request))
+                            {
+                                var pa = request.Body["p"] as List<object>;
+
                             }
                         }
                     }

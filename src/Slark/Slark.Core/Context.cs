@@ -28,7 +28,7 @@ namespace Slark.Core
         {
             if (string.IsNullOrEmpty(Response))
             {
-                Response = "";
+                Response = "{}";
             }
             return Sender.SendAsync(Response);
         }

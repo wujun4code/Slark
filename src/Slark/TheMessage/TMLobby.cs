@@ -6,6 +6,7 @@ using Slark.Core.Extensions;
 using Slark.Core.Protocol;
 using TheMessage.Protocols;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace TheMessage
 {
@@ -17,6 +18,23 @@ namespace TheMessage
         }
 
         public TMRoomServer RoomServer { get; set; } = new TMRoomServer();
+
+        public IDictionary<string, ISlarkProtocol> RpcFuncs = new Dictionary<string, ISlarkProtocol>();
+
+        public void Register(string functionName, ISlarkProtocol functionHandler)
+        {
+            RpcFuncs[functionName] = functionHandler;
+        }
+
+        public virtual Task InvokeRpc(string functionName, SlarkContext context)
+        {
+            if (RpcFuncs.ContainsKey(functionName))
+            {
+                var function = RpcFuncs[functionName];
+                return function.ExecuteAsync(context);
+            }
+            return Task.FromResult("");
+        }
 
         [Injective("CreateClientAsync")]
         public Task<SlarkClient> Create(SlarkClientConnection slarkClientConnection)
@@ -40,6 +58,32 @@ namespace TheMessage
                 Sender = slarkClientConnection,
             };
             return context;
+        }
+
+        [Request("/rpc/")]
+        public Task OnRpcRedicrect(SlarkContext context)
+        {
+            if (context.Message is TMJsonRequest request)
+            {
+                var method = request.Url.Split("/").Last();
+                if (!RpcFuncs.ContainsKey(method)) throw new MissingMethodException($"MissingMethodException OnRpcRedicrect on {method}");
+                return RpcFuncs[method].ExecuteAsync(context);
+            }
+            return context.ReplyAsync();
+        }
+
+        [Rpc("login")]
+        public Task LogIn(string username, string password)
+        {
+            Console.WriteLine($"username:{username},password:{password}");
+            return Task.FromResult(0);
+        }
+
+        [Rpc("createRoom")]
+        public async Task CreateRoom(TMRoom room)
+        {
+            Console.WriteLine($"room.GameMode:{room.GameMode}");
+            await RoomServer.PostAsync(room);
         }
 
         [Request("/login")]

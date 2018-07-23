@@ -24,7 +24,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol
         }
 
 
-        public virtual Task<string> ResponseAsync(SlarkContext context)
+        public virtual Task ExecuteAsync(SlarkContext context)
         {
             var response = context.Response ?? context.Message.MetaText;
             return Task.FromResult(response);

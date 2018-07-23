@@ -79,7 +79,7 @@ namespace Slark.Server.LeanCloud.Play.Protocol
             return base.GetTargetsAsync(context);
         }
 
-        public override Task<string> ResponseAsync(SlarkContext context)
+        public override Task ExecuteAsync(SlarkContext context)
         {
             var request = context.Message as PlayRequest;
             var responseBody = new Dictionary<string, object>()
