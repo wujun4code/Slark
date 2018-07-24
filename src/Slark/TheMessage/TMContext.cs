@@ -26,9 +26,9 @@ namespace TheMessage
             if (string.IsNullOrEmpty(Response)) Response = "{}";
             if (Message is TMJsonRequest request)
             {
-                var resJson = Response.ToTMDictionary();
+                var resJson = Response.ToDictionary();
                 resJson["i"] = request.CommandId;
-                Response = resJson.ToTMJsonString();
+                Response = resJson.ToJsonString();
             }
             return base.ReplyAsync();
         }

@@ -41,19 +41,9 @@ namespace TheMessage.Protocols
     public sealed class RpcAttribute : Attribute
     {
         public string Name { get; set; }
-        public RpcAttribute(string name)
+        public RpcAttribute(string name = null)
         {
             Name = name;
-        }
-
-        public bool Match(TMJsonRequest request)
-        {
-            if (string.IsNullOrEmpty(Name)) return false;
-            if (!request.Url.StartsWith("/rpc", StringComparison.Ordinal)) return false;
-
-            var result = $"/rpc/{Name}".Equals(request.Url);
-
-            return result;
         }
     }
 

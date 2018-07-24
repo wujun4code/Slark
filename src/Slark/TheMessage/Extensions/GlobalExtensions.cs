@@ -1,21 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Globalization;
+using System.Linq;
+using LeanCloud;
+using LeanCloud.Core.Internal;
+using LeanCloud.Storage.Internal;
 
 namespace TheMessage
 {
     public static class GlobalExtensions
     {
-        public static string ToTMJsonString(this IDictionary<string, object> source)
+        internal static readonly string[] DateFormatStrings = {
+      // Official ISO format
+      "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'",
+
+      // It's possible that the string converter server-side may trim trailing zeroes,
+      // so these two formats cover ourselves from that.
+      "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ff'Z'",
+      "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'f'Z'",
+    };
+        public static IDictionary<string, object> FullEncode(this AVObject obj)
         {
-            string json = JsonConvert.SerializeObject(source);
-            return json;
+            var objectJSON = obj.Encode();
+            if (obj.CreatedAt.HasValue)
+            {
+                objectJSON["createdAt"] = obj.CreatedAt.Value.ToString(DateFormatStrings.First(),
+                CultureInfo.InvariantCulture);
+            }
+            if (obj.UpdatedAt.HasValue)
+            {
+                objectJSON["updatedAt"] = obj.UpdatedAt.Value.ToString(DateFormatStrings.First(),
+                CultureInfo.InvariantCulture);
+            }
+            objectJSON["className"] = obj.ClassName;
+
+            return objectJSON;
         }
 
-        public static IDictionary<string, object> ToTMDictionary(this string obj)
-        {
-            var values = JsonConvert.DeserializeObject<Dictionary<string, object>>(obj);
-            return values;
-        } 
     }
 }

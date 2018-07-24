@@ -5,8 +5,8 @@ using Slark.Core;
 using Slark.Core.Extensions;
 using Slark.Core.Protocol;
 using TheMessage.Protocols;
-using Newtonsoft.Json;
 using System.Linq;
+using LeanCloud;
 
 namespace TheMessage
 {
@@ -44,8 +44,7 @@ namespace TheMessage
 
         public override ISlarkMessage CreateMessage(string message)
         {
-            var request = JsonConvert.DeserializeObject<TMJsonRequest>(message);
-            request.MetaText = message;
+            var request = new TMJsonRequest(message);
             return request;
         }
 
@@ -72,14 +71,14 @@ namespace TheMessage
             return context.ReplyAsync();
         }
 
-        [Rpc("login")]
-        public Task LogIn(string username, string password)
+        [Rpc]
+        public async Task<AVUser> LogIn(string username, string password)
         {
             Console.WriteLine($"username:{username},password:{password}");
-            return Task.FromResult(0);
+            return await AVUser.LogInAsync(username, password);
         }
 
-        [Rpc("createRoom")]
+        [Rpc]
         public async Task CreateRoom(TMRoom room)
         {
             Console.WriteLine($"room.GameMode:{room.GameMode}");
@@ -104,18 +103,18 @@ namespace TheMessage
             await context.ReplyAsync();
         }
 
-        [Request("/room", "POST")]
-        public async Task CreateRoom(SlarkContext context)
-        {
-            if (context.Message is TMJsonRequest request)
-            {
-                var roomJson = request.Body.ToTMJsonString();
-                var room = JsonConvert.DeserializeObject<TMRoom>(roomJson);
-                await RoomServer.PostAsync(room);
-                context.Response = JsonConvert.SerializeObject(room);
-                return;
-            }
-            await context.ReplyAsync();
-        }
+        //[Request("/room", "POST")]
+        //public async Task CreateRoom(SlarkContext context)
+        //{
+        //    if (context.Message is TMJsonRequest request)
+        //    {
+        //        var roomJson = request.Body.ToJsonString();
+        //        var room = JsonConvert.DeserializeObject<TMRoom>(roomJson);
+        //        await RoomServer.PostAsync(room);
+        //        context.Response = JsonConvert.SerializeObject(room);
+        //        return;
+        //    }
+        //    await context.ReplyAsync();
+        //}
     }
 }

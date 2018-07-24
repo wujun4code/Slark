@@ -9,6 +9,7 @@ using Slark.Server.WebSoket;
 using TheMessage;
 using Slark.Core.Extensions;
 using TheMessage.Extensions;
+using LeanCloud;
 
 namespace Slark.Server.ConsoleApp.NETCore
 {
@@ -26,6 +27,7 @@ namespace Slark.Server.ConsoleApp.NETCore
 
         public static void ConfigCloud(Cloud cloud)
         {
+            AVClient.Initialize("JRsk29cDwQNGHaIM2PM0VBWt-9Nh9j0Va", "uerPuKWcaSqHGBYVbPBYcv6V");
             cloud.UseLog();
             cloud.UseHttpsRedirect();
         }
