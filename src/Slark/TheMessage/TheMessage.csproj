@@ -8,10 +8,12 @@
     <Folder Include="Protocols\" />
     <Folder Include="Spells\" />
     <Folder Include="Utils\" />
+    <Folder Include="Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="TMServer.cs" />
     <Compile Remove="Protocols\TMConnectRequest.cs" />
+    <Compile Remove="Protocols\TMRoomCreateRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Slark.Core\Slark.Core.csproj" />

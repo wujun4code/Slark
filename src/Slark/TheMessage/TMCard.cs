@@ -1,13 +1,14 @@
 ﻿using System;
+using LeanCloud;
+
 namespace TheMessage
 {
-    public class TMCard
+    [AVClassName("TMGame")]
+    public class TMCard : AVObject
     {
         public TMCard()
         {
 
         }
-
-
     }
 }

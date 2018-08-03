@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using LeanCloud;
 using Slark.Core;
 using Slark.Core.Protocol;
 
 namespace TheMessage
 {
-    public class TMJsonRequest : ISlarkMessage
+    [AVClassName("TMJsonRequest")]
+    public class TMJsonRequest : AVObject, ISlarkMessage
     {
         public TMJsonRequest()
         {
@@ -18,50 +20,51 @@ namespace TheMessage
         public TMJsonRequest(string metaText)
         {
             MetaText = metaText;
-            MetaObject = MetaText.ToDictionary();
-
-            if (MetaObject["url"] is string url)
-            {
-                Url = url;
-            }
-
-            if (MetaObject.ContainsKey("headers"))
-            {
-                if (MetaObject["headers"] is IDictionary<string, object> headers)
-                    Headers = headers.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()).ToList();
-            }
-
-            if (MetaObject["method"] is string method)
-            {
-                Method = method;
-            }
-
-            if (MetaObject["body"] is Dictionary<string, object> body)
-            {
-                Body = body;
-            }
-
-            if (MetaObject["i"] is int i)
-            {
-                CommandId = i;
-            }
         }
 
         public IDictionary<string, object> MetaObject { get; set; }
 
+        [AVFieldName("url")]
         public string Url
         {
-            get;
-            set;
+            get { return GetProperty<string>("Url"); }
+            set { SetProperty<string>(value, "Url"); }
         }
 
-        public IList<KeyValuePair<string, string>> Headers { get; set; }
+        [AVFieldName("headers")]
+        public IDictionary<string, string> Headers
+        {
+            get { return GetProperty<IDictionary<string, string>>("Headers"); }
+            set { SetProperty<IDictionary<string, string>>(value, "Headers"); }
+        }
 
-        public IDictionary<string, object> Body { get; set; }
+        [AVFieldName("body")]
+        public IDictionary<string, object> Body
+        {
+            get { return GetProperty<IDictionary<string, object>>("Body"); }
+            set { SetProperty<IDictionary<string, object>>(value, "Body"); }
+        }
 
-        public string Method { get; set; }
+        [AVFieldName("method")]
+        public string Method
+        {
+            get { return GetProperty<string>("Method"); }
+            set { SetProperty<string>(value, "Method"); }
+        }
 
-        public int CommandId { get; set; }
+        [AVFieldName("i")]
+        public int CommandId
+        {
+            get { return GetProperty<int>("CommandId"); }
+            set { SetProperty<int>(value, "CommandId"); }
+        }
+
+        [AVFieldName("si")]
+        public string ServerCommandId
+        {
+            get { return GetProperty<string>("ServerCommandId"); }
+            set { SetProperty<string>(value, "ServerCommandId"); }
+        }
 
         public string MetaText { get; set; }
 

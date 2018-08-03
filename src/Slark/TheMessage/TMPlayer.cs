@@ -1,26 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using LeanCloud;
 using Slark.Core;
 using TheMessage.Extensions;
 
 namespace TheMessage
 {
-    public class TMPlayer
+    [AVClassName("TMPlayer")]
+    public class TMPlayer : AVObject
     {
         public TMPlayer()
         {
 
         }
 
-        public TMPlayer(SlarkClientConnection connection)
+        public TMPlayer(ClientInfoInRoom clientInfoInRoom)
         {
-            ClientConnection = connection;
+            Client = clientInfoInRoom.Client;
         }
-        public SlarkClientConnection ClientConnection { get; set; }
+
+        public enum TMGameState
+        {
+            WaitingForOthers,
+            Deciding,
+            Drawing,
+            Transmiting,
+            Ending
+        }
+
+        public TMClient Client { get; set; }
+
+        public TMGame Game { get; set; }
 
         public TMCharacter Charater { get; set; }
 
         public TMCamp Camp { get; set; }
+
+        public IEnumerable<TMCard> CardsInHand { get; set; }
 
         public IEnumerable<TMIntelligence> ReceivedIntelligences { get; set; }
 

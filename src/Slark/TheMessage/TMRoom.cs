@@ -4,61 +4,279 @@ using System.Threading.Tasks;
 using Slark.Core.Extensions;
 using System.Linq;
 using TheMessage.Extensions;
+using LeanCloud;
+using Slark.Core;
+using TheMessage.Protocols;
 
 namespace TheMessage
 {
-    public class TMGameMode
+    [AVClassName("ClientInfoInRoom")]
+    public class ClientInfoInRoom : AVObject
     {
-        public byte Total
+        public ClientInfoInRoom() { }
+        public ClientInfoInRoom(TMClient client)
         {
-            get => (byte)(Blue + Red + Independent);
+            Client = client;
+            ClientStatus = ClientStatusForRoom.Init;
+            ScreenName = client.User.Username;
         }
 
-        public byte Blue { get; set; }
+        [AVFieldName("screenName")]
+        public string ScreenName
+        {
+            get
+            {
+                return this.GetProperty<string>("ScreenName");
+            }
+            set
+            {
+                this.SetProperty<string>(value, "ScreenName");
+            }
+        }
 
-        public byte Red { get; set; }
+        [AVFieldName("seatIndex")]
+        public int SeatIndex
+        {
+            get
+            {
+                return this.GetProperty<int>("SeatIndex");
+            }
+            set
+            {
+                this.SetProperty<int>(value, "SeatIndex");
+            }
+        }
 
-        public byte Independent { get; set; }
+        public TMClient Client { get; set; }
+
+        [AVFieldName("clientStatus")]
+        public ClientStatusForRoom ClientStatus
+        {
+            get
+            {
+                var originalValue = this.GetProperty<int>("ClientStatus");
+                return (ClientStatusForRoom)originalValue;
+            }
+            set
+            {
+                var originalValue = (int)value;
+                this.SetProperty<int>(originalValue, "ClientStatus");
+            }
+        }
+
+        public enum ClientStatusForRoom
+        {
+            Init = 0,
+            Ready = 1,
+            Unready = 2,
+        }
     }
 
-
-    public class TMRoom
+    [RpcHost]
+    [AVClassName("TMRoom")]
+    public class TMRoom : AVObject, IRpc
     {
         public TMRoom()
         {
 
         }
 
-        //public enum GameMode
-        //{
-        //    R1B1I1T3 = 1,
-        //    R1B1I2T4,
-        //    R2B2I0T4,
-        //    R2B2I1T5,
-        //    R2B2I2T6,
-        //    R3B3I0T6,
-        //    R3B3I1T7,
-        //    R2B2I3T7,
-        //    R3B3I2T8,
-        //    R3B3I3T9
-        //}
-
-        public TMGameMode GameMode { get; set; }
-        public IEnumerable<TMCharacter> InitCharacters { get; set; }
-        public IEnumerable<TMPlayer> Players { get; set; }
-        public string Id { get; set; }
-
-        public async Task InitAllotCharactersAsync(byte initCharacterCountPerPlayer = 2)
+        [RpcHostIdProperty]
+        public string Id
         {
-            var randomCount = Players.Count() * initCharacterCountPerPlayer;
-            var picked = InitCharacters.PickRandom(randomCount);
-            var chunks = picked.ChunkBy(initCharacterCountPerPlayer).ToArray();
-            var players = Players.ToArray();
-            for (int i = 0; i < chunks.Length; i++)
+            get
             {
-                await players[i].AlloctAsync(chunks[i]);
+                return this.ObjectId;
             }
         }
+
+        public object mutex = new object();
+        public int NextSeatIndex
+        {
+            get
+            {
+                lock (mutex)
+                {
+                    int i = 1;
+                    while (i < MaxPlayerCount)
+                    {
+                        if (ClientInfos.Any(info => info.SeatIndex == i))
+                        {
+                            i++;
+                            continue;
+                        }
+                        return i;
+                    }
+                    return 1;
+                }
+            }
+        }
+
+        [AVFieldName("status")]
+        public RoomStatus Status
+        {
+            get
+            {
+                var originalValue = this.GetProperty<int>("Status");
+                return (RoomStatus)originalValue;
+            }
+            set
+            {
+                var originalValue = (int)value;
+                this.SetProperty<int>(originalValue, "Status");
+            }
+        }
+
+        public enum RoomStatus
+        {
+            Created = 1,
+            Waiting = 2,
+            Playing = 3
+        }
+
+        [AVFieldName("maxPlayerCount")]
+        public int MaxPlayerCount
+        {
+            get
+            {
+                return this.GetProperty<int>();
+            }
+            set
+            {
+                this.SetProperty<int>(value);
+            }
+        }
+
+        [AVFieldName("host")]
+        public AVUser HostUser
+        {
+            get
+            {
+                return this.GetProperty<AVUser>();
+            }
+            set
+            {
+                this.SetProperty<AVUser>(value);
+            }
+        }
+
+
+        public TMRoomContainer RoomContainer { get; set; }
+        public ClientInfoInRoom HostClient { get; set; }
+
+        [AVFieldName("clientInfos")]
+        public IList<ClientInfoInRoom> ClientInfos
+        {
+            get
+            {
+                return this.GetProperty<IList<ClientInfoInRoom>>("ClientInfos");
+            }
+            set
+            {
+                this.SetProperty<IList<ClientInfoInRoom>>(value, "ClientInfos");
+            }
+        }
+
+        #region game
+        [Rpc]
+        public async Task<TMGame> StartNewGame(TMContext context)
+        {
+            await context.ReplyOKAsync();
+            var game = new TMGame();
+            game.Room = this;
+            game.Players = ClientInfos.Select(info => new TMPlayer(info) { Game = game });
+            game.AdjustMode();
+            await this.RpcAllAsync("OnNewGameCreated", game);
+            return game;
+        }
+        #endregion
+        [Rpc]
+        public async Task SetReady(bool toggle, TMContext context)
+        {
+            var info = FindClientInfo(context.Client);
+            if (info != null)
+            {
+                if (toggle)
+                {
+                    info.ClientStatus = ClientInfoInRoom.ClientStatusForRoom.Ready;
+                }
+                else
+                {
+                    info.ClientStatus = ClientInfoInRoom.ClientStatusForRoom.Unready;
+                }
+            }
+
+            await context.ReplyOKAsync();
+
+            this.RpcAllAsync("OnReady", context.Client.User.ObjectId, info.SeatIndex, toggle);
+        }
+
+        [Rpc]
+        public ClientInfoInRoom JoinRoom(TMContext context)
+        {
+            var info = new ClientInfoInRoom(context.Client)
+            {
+                SeatIndex = NextSeatIndex
+            };
+
+            ClientInfos.Add(info);
+
+            if (Status == RoomStatus.Created)
+            {
+                Status = RoomStatus.Waiting;
+            }
+
+            this.RpcAllAsync("OnNewClientJoined", info);
+            return info;
+        }
+
+        [Rpc]
+        public ClientInfoInRoom QuitRoom(TMContext context)
+        {
+            var info = FindClientInfo(context.Client);
+            ClientInfos.Remove(info);
+            this.RpcAllAsync("OnClientQuit", info);
+            if (ClientInfos.Count == 0)
+            {
+                RoomContainer.ClearRoom(this);
+            }
+            return info;
+        }
+
+        public ClientInfoInRoom DisconnectRoom(TMClient client)
+        {
+            var info = FindClientInfo(client);
+            ClientInfos.Remove(info);
+            this.RpcAllAsync("OnClientDisconnect", info);
+            return info;
+        }
+
+        [Rpc]
+        public void SetRoomHost(TMContext context)
+        {
+            var info = FindClientInfo(context.Client);
+            HostClient = info;
+            this.HostUser = info.Client.User;
+        }
+
+        [Rpc]
+        public async Task RoomTextMessage(string message, TMContext context)
+        {
+            await this.RpcAllAsync("OnRoomTextMessage", context.Client.User, message);
+        }
+
+        public ClientInfoInRoom FindClientInfo(TMClient client)
+        {
+            var info = ClientInfos.FirstOrDefault(ci => ci.Client == client);
+            return info;
+        }
+
+        public Task BroadcastAsync(string message)
+        {
+            return this.ClientInfos.Select(info => info.Client).BroadcastAsync(message);
+        }
+
+
 
         //public Task InitAllotCampsAsync(IEnumerable<TMPlayer> blues, IEnumerable<TMPlayer> reds, IEnumerable<TMPlayer> independents)
         //{

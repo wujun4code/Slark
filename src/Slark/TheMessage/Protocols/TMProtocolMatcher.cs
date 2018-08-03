@@ -31,6 +31,15 @@ namespace TheMessage.Protocols
                     }
                 }
             }
+            else if (context.Message is TMJsonResponse response)
+            {
+                if (context.Sender.Client is TMClient client)
+                {
+                    client.OnResponse?.Invoke(client, response);
+                }
+
+                return Task.FromResult(new OkProtocol() as ISlarkProtocol);
+            }
 
             return base.FindAsync(context);
         }

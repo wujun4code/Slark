@@ -13,6 +13,14 @@ namespace TheMessage
 
         }
 
+        public TMClient Client
+        {
+            get
+            {
+                return Sender.Client as TMClient;
+            }
+        }
+
         public override SlarkServer Server { get; set; }
         public override SlarkClientConnection Sender { get; set; }
         public override ISlarkMessage Message { get; set; }
@@ -31,6 +39,17 @@ namespace TheMessage
                 Response = resJson.ToJsonString();
             }
             return base.ReplyAsync();
+        }
+
+        public Task ReplyOKAsync()
+        {
+            var result = new Dictionary<string, object>()
+            {
+                { "results", "ok" }
+            };
+
+            Response = result.ToJsonString();
+            return ReplyAsync();
         }
     }
 }

@@ -8,21 +8,12 @@ using Slark.Core.Utils.Protocol;
 
 namespace Slark.Core
 {
-    public delegate Task<SlarkClient> CreateClientAsyncFunc(SlarkClientConnection slarkClientConnection);
-
     public abstract class SlarkStandardServer : SlarkServer
     {
-        public CreateClientAsyncFunc CreateClientAsync { get; set; }
-
         public SlarkStandardServer()
         {
             ConnectionList = new ConcurrentHashSet<SlarkClientConnection>();
             Pollings = new List<SlarkPollingController>();
-
-            CreateClientAsync = (connection) =>
-            {
-                return Task.FromResult(new SlarkStandardClient() { } as SlarkClient);
-            };
         }
 
         public virtual List<SlarkPollingController> Pollings { get; set; }
@@ -45,7 +36,7 @@ namespace Slark.Core
 
         public override async Task<SlarkClientConnection> OnConnected(SlarkClientConnection slarkClientConnection)
         {
-            slarkClientConnection.Client = await CreateClientAsync(slarkClientConnection);
+            slarkClientConnection.Client = await CreateClient(slarkClientConnection);
             return slarkClientConnection;
         }
 
@@ -79,6 +70,11 @@ namespace Slark.Core
                 Sender = slarkClientConnection,
             };
             return context;
+        }
+
+        public virtual Task<SlarkClient> CreateClient(SlarkClientConnection slarkClientConnection)
+        {
+            return Task.FromResult(new SlarkStandardClient() { } as SlarkClient);
         }
 
         public virtual ISlarkMessage CreateMessage(string message)

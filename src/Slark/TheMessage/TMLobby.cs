@@ -7,23 +7,44 @@ using Slark.Core.Protocol;
 using TheMessage.Protocols;
 using System.Linq;
 using LeanCloud;
+using LeanCloud.Storage.Internal;
+using LeanCloud.Core.Internal;
+using TheMessage.Extensions;
 
 namespace TheMessage
 {
-    public class TMLobby : SlarkStandardServer
+    [RpcHost]
+    public class TMLobby : SlarkStandardServer, IRpc
     {
+        static TMLobby()
+        {
+            AVObject.RegisterSubclass<TMJsonRequest>();
+            AVObject.RegisterSubclass<TMRoom>();
+            AVObject.RegisterSubclass<ClientInfoInRoom>();
+        }
+
         public TMLobby()
         {
             ProtocolMatcher = new TMProtocolMatcher();
+            RoomContainer = new TMRoomContainer()
+            {
+                Lobby = this
+            };
         }
 
-        public TMRoomServer RoomServer { get; set; } = new TMRoomServer();
+        public TMRoomContainer RoomContainer { get; set; }
 
         public IDictionary<string, ISlarkProtocol> RpcFuncs = new Dictionary<string, ISlarkProtocol>();
 
         public void Register(string functionName, ISlarkProtocol functionHandler)
         {
             RpcFuncs[functionName] = functionHandler;
+            Console.WriteLine($"rpc.Register:{functionName}");
+        }
+        public void Unregister(string functionName)
+        {
+            RpcFuncs.Remove(functionName);
+            Console.WriteLine($"rpc.Unregister:{functionName}");
         }
 
         public virtual Task InvokeRpc(string functionName, SlarkContext context)
@@ -36,16 +57,25 @@ namespace TheMessage
             return Task.FromResult("");
         }
 
-        [Injective("CreateClientAsync")]
-        public Task<SlarkClient> Create(SlarkClientConnection slarkClientConnection)
+        public override Task<SlarkClient> CreateClient(SlarkClientConnection slarkClientConnection)
         {
             return Task.FromResult(new TMClient() as SlarkClient);
         }
 
         public override ISlarkMessage CreateMessage(string message)
         {
-            var request = new TMJsonRequest(message);
-            return request;
+            if (Json.Parse(message) is IDictionary<string, object> result)
+            {
+                if (result.ContainsKey("results") && result.ContainsKey("si"))
+                {
+                    return result["results"] is Dictionary<string, object> results
+                        ? new TMJsonResponse(message, results, result["si"].ToString())
+                        : new TMJsonResponse(message);
+                }
+                var state = AVObjectCoder.Instance.Decode(result, AVDecoder.Instance);
+                return AVObject.FromState<TMJsonRequest>(state, result["className"] as string);
+            }
+            return base.CreateMessage(message);
         }
 
         public override SlarkContext CreateContext(SlarkClientConnection slarkClientConnection, string message)
@@ -62,45 +92,79 @@ namespace TheMessage
         [Request("/rpc/")]
         public Task OnRpcRedicrect(SlarkContext context)
         {
-            if (context.Message is TMJsonRequest request)
+            try
             {
-                var method = request.Url.Split("/").Last();
-                if (!RpcFuncs.ContainsKey(method)) throw new MissingMethodException($"MissingMethodException OnRpcRedicrect on {method}");
-                return RpcFuncs[method].ExecuteAsync(context);
-            }
-            return context.ReplyAsync();
-        }
-
-        [Rpc]
-        public async Task<AVUser> LogIn(string username, string password)
-        {
-            Console.WriteLine($"username:{username},password:{password}");
-            return await AVUser.LogInAsync(username, password);
-        }
-
-        [Rpc]
-        public async Task CreateRoom(TMRoom room)
-        {
-            Console.WriteLine($"room.GameMode:{room.GameMode}");
-            await RoomServer.PostAsync(room);
-        }
-
-        [Request("/login")]
-        public async Task LogIn(SlarkContext context)
-        {
-            if (context.Message is TMJsonRequest request)
-            {
-                var data = new Dictionary<string, object>()
+                if (context.Message is TMJsonRequest request)
                 {
-                    { "echo", $"welcome, {request.Body["username"]}"},
-                    { "i", request.CommandId },
-                    { "auth",true },
-                    { "connId",context.Sender.Id }
-                };
-                context.Response = SlarkCorePlugins.Singleton.Encoder.Encode(data);
-                return;
+                    var method = request.Url.Split("/").Last();
+                    if (!RpcFuncs.ContainsKey(method)) throw new MissingMethodException($"MissingMethodException OnRpcRedicrect on {method}");
+                    return RpcFuncs[method].ExecuteAsync(context);
+                }
+                return context.ReplyAsync();
             }
-            await context.ReplyAsync();
+            catch (Exception ex)
+            {
+                var errorJson = new Dictionary<string, object>();
+                if (ex is MissingMethodException mmex)
+                {
+                    errorJson["code"] = 404;
+                    errorJson["message"] = mmex.Message;
+                }
+                return context.ReplyAsync();
+            }
+        }
+
+        [Rpc]
+        public async Task<AVUser> LogIn(string username, string password, TMContext context)
+        {
+            Console.WriteLine($"username:{username}, password:{password}");
+            var user = await AVUser.LogInAsync(username, password);
+            context.Client.User = user;
+            return user;
+        }
+
+        [Rpc]
+        public async Task<TMRoom> CreateRoom(TMRoom room, TMContext context)
+        {
+            await RoomContainer.PostAsync(room);
+            room.UseRpc(this);
+            room.JoinRoom(context);
+            room.SetRoomHost(context);
+            return room;
+        }
+
+        [Rpc]
+        public async Task<TMRoom> QuickJoin(TMContext context)
+        {
+            var room = await RoomContainer.GetQuickStartRoom();
+            if (room.Status == TMRoom.RoomStatus.Created)
+            {
+                room.UseRpc(this);
+                room.JoinRoom(context);
+                room.SetRoomHost(context);
+            }
+            else
+            {
+                room.JoinRoom(context);
+            }
+            return room;
+        }
+
+        [Rpc]
+        public async Task WorldTextMessage(TMClient client, string message, TMContext context)
+        {
+            var clients = this.Connections.Select(c => c.Client as TMClient);
+            await this.RpcAsync(clients, "WorldMessage", client.User, message);
+        }
+
+        public override Task OnDisconnected(SlarkClientConnection slarkClientConnection)
+        {
+            if (slarkClientConnection.Client is TMClient client)
+            {
+                RoomContainer.ClientDisconnectLobby(client);
+            }
+
+            return base.OnDisconnected(slarkClientConnection);
         }
 
         //[Request("/room", "POST")]

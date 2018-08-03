@@ -9,10 +9,12 @@ namespace Slark.Server.LeanCloud.Play
     {
         public PlayServer()
         {
-            this.CreateClientAsync = (connection) =>
-            {
-                return Task.FromResult(new StandardPlayClient() { } as SlarkClient);
-            };
+
+        }
+
+        public override Task<SlarkClient> CreateClient(SlarkClientConnection slarkClientConnection)
+        {
+            return Task.FromResult(new StandardPlayClient() { } as SlarkClient);
         }
 
         public override SlarkContext CreateContext(SlarkClientConnection slarkClientConnection, string message)

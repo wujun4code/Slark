@@ -11,7 +11,7 @@ namespace TheMessage.Extensions
         public static Task AlloctAsync(this TMPlayer player, IEnumerable<TMCharacter> characters)
         {
             var text = SlarkCorePlugins.Singleton.Encoder.Encode(characters);
-            return player.ClientConnection.SendAsync(text);
+            return player.Client.SendAsync(text);
         }
     }
 }

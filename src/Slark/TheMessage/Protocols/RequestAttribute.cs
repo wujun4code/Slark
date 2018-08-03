@@ -36,31 +36,4 @@ namespace TheMessage.Protocols
             return result;
         }
     }
-
-    [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
-    public sealed class RpcAttribute : Attribute
-    {
-        public string Name { get; set; }
-        public RpcAttribute(string name = null)
-        {
-            Name = name;
-        }
-    }
-
-    public delegate Task RpcFunctionDelegate(SlarkContext context);
-
-    public class StandardRpcFunctionHandler : ISlarkProtocol
-    {
-        public StandardRpcFunctionHandler(RpcFunctionDelegate funcDelegate)
-        {
-            FuncDel = funcDelegate;
-        }
-
-        public RpcFunctionDelegate FuncDel { get; set; }
-
-        public Task ExecuteAsync(SlarkContext context)
-        {
-            return FuncDel.Invoke(context);
-        }
-    }
 }

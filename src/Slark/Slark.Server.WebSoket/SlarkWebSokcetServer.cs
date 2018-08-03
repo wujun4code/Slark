@@ -48,6 +48,7 @@ namespace Slark.Server.WebSoket
             var clientConnection = FromWebSocket(context, webSocket);
             this.AddConnectionSync(clientConnection);
             await this.OnConnected(clientConnection);
+            clientConnection.Client.Courier = clientConnection.SendAsync;
             return clientConnection;
         }
 

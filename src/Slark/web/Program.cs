@@ -28,6 +28,7 @@ namespace Slark.Server.ConsoleApp.NETCore
         public static void ConfigCloud(Cloud cloud)
         {
             AVClient.Initialize("JRsk29cDwQNGHaIM2PM0VBWt-9Nh9j0Va", "uerPuKWcaSqHGBYVbPBYcv6V");
+            AVClient.HttpLog(Console.WriteLine);
             cloud.UseLog();
             cloud.UseHttpsRedirect();
         }
@@ -48,7 +49,8 @@ namespace Slark.Server.ConsoleApp.NETCore
 
             TM.Init();
 
-            var playLobbyServer = new TMLobby().UseRpc().Inject<TMLobby>();
+            var playLobbyServer = new TMLobby();
+            playLobbyServer.UseRpc(playLobbyServer);
 
             var playLobbyWebSocketServer = playLobbyServer.UseWebSocket(hostingUrlWithSchema, "/lobby");
 
