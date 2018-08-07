@@ -30,7 +30,7 @@ namespace TheMessage
         public async Task<string> PostAsync(TMRoom room)
         {
             room.MaxPlayerCount = 8;
-            room.ClientInfos = new List<ClientInfoInRoom>();
+            room.ClientInfos = new List<TMClientInfoInRoom>();
             room.Status = TMRoom.RoomStatus.Created;
             room.RoomContainer = this;
             Rooms.Add(room);
@@ -53,12 +53,10 @@ namespace TheMessage
         {
             var room = new TMRoom();
             room.MaxPlayerCount = 8;
-           
             room.Status = TMRoom.RoomStatus.Created;
-            room.ClientInfos = new List<ClientInfoInRoom>();
+            room.ClientInfos = new List<TMClientInfoInRoom>();
             room.RoomContainer = this;
             Rooms.Add(room);
-
             await room.SaveAsync();
             return room;
         }

@@ -41,7 +41,7 @@ namespace TheMessage
     }
 
     [AVClassName("TMGame")]
-    public class TMGame : AVObject
+    public class TMGame : AVObject, IRpc
     {
         public TMGame()
         {
@@ -57,13 +57,40 @@ namespace TheMessage
             }
         }
 
-        public TMRoom Room { get; set; }
+        [AVFieldName("room")]
+        public TMRoom Room 
+        { 
+            get
+            {
+                return this.GetProperty<TMRoom>("Room");
+            }
+            set
+            {
+                this.SetProperty<TMRoom>(value, "Room");
+            }
+        }
 
-        public IEnumerable<TMPlayer> Players { get; set; }
+        //[AVFieldName("players")]
+        //public IList<TMPlayer> Players
+        //{ 
+        //    get
+        //    {
+        //        return this.GetProperty<IList<TMPlayer>>("Players");
+        //    }
+        //    set
+        //    {
+        //        this.SetProperty<IList<TMPlayer>>(value, "Players");
+        //    }
+        //}
+
+        public IList<TMPlayer> Players
+        {
+            get;set;
+        }
 
         public IEquatable<TMCard> Cards { get; set; }
 
-        [AVFieldName("mode")]
+
         public TMGameMode GameMode
         {
             get
@@ -135,16 +162,43 @@ namespace TheMessage
 
         public IEnumerable<TMCharacter> InitCharacters { get; set; }
 
+        public async Task SavePlayersAsync(TMRoom room)
+        {
+            var players = new List<TMPlayer>();
+            foreach (var info in room.ClientInfos)
+            {
+                TMPlayer player = new TMPlayer(info) { Game = this };
+                players.Add(player);
+            }
+            Players = players;
+            //this.AdjustMode();
+            await this.SaveAsync();
+        }
+
         public async Task InitAllotCharactersAsync(byte initCharacterCountPerPlayer = 2)
         {
+            InitCharacters = await new AVQuery<TMCharacter>().Limit(100).Select("screenName").Select("serial").FindAsync();
             var randomCount = Players.Count() * initCharacterCountPerPlayer;
             var picked = InitCharacters.PickRandom(randomCount);
             var chunks = picked.ChunkBy(initCharacterCountPerPlayer).ToArray();
             var players = Players.ToArray();
+
+            List<Task> all = new List<Task>();
+
             for (int i = 0; i < chunks.Length; i++)
             {
-                await players[i].AlloctAsync(chunks[i]);
+                var characters = chunks[i];
+                var player = players[i];
+                var task = player.RpcWithChoiceAsync("OnCharactersAllotted", characters.ToList()).ContinueWith(t =>
+                  {
+                      TMCharacter selectdCharacter = t.Result;
+                      return this.RpcAllAsync("OnPlayerSelectedCharacter", player, selectdCharacter);
+                  }).Unwrap();
+
+                all.Add(task);
             }
+            await Task.WhenAll(all);
+            await this.RpcAllAsync("OnAllCharactersSelected");
         }
     }
 }

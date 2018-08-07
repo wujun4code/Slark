@@ -15,5 +15,6 @@
 
   <ItemGroup>
     <Compile Remove="SlackHttpServer.cs" />
+    <Compile Remove="SlarkWebSocketAspNetMiddleware.cs" />
   </ItemGroup>
 </Project>

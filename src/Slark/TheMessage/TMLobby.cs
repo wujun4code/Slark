@@ -20,7 +20,10 @@ namespace TheMessage
         {
             AVObject.RegisterSubclass<TMJsonRequest>();
             AVObject.RegisterSubclass<TMRoom>();
-            AVObject.RegisterSubclass<ClientInfoInRoom>();
+            AVObject.RegisterSubclass<TMClientInfoInRoom>();
+            AVObject.RegisterSubclass<TMGame>();
+            AVObject.RegisterSubclass<TMPlayer>();
+            AVObject.RegisterSubclass<TMCharacter>();
         }
 
         public TMLobby()
@@ -70,7 +73,7 @@ namespace TheMessage
                 {
                     return result["results"] is Dictionary<string, object> results
                         ? new TMJsonResponse(message, results, result["si"].ToString())
-                        : new TMJsonResponse(message);
+                            : new TMJsonResponse(message, result["si"].ToString());
                 }
                 var state = AVObjectCoder.Instance.Decode(result, AVDecoder.Instance);
                 return AVObject.FromState<TMJsonRequest>(state, result["className"] as string);
@@ -128,6 +131,7 @@ namespace TheMessage
         {
             await RoomContainer.PostAsync(room);
             room.UseRpc(this);
+            room.Lobby = this;
             room.JoinRoom(context);
             room.SetRoomHost(context);
             return room;
@@ -141,6 +145,7 @@ namespace TheMessage
             {
                 room.UseRpc(this);
                 room.JoinRoom(context);
+                room.Lobby = this;
                 room.SetRoomHost(context);
             }
             else

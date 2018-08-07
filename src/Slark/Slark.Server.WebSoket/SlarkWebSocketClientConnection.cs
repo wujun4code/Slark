@@ -24,7 +24,7 @@ namespace Slark.Server.WebSoket
 
         public override async Task SendAsync(string message)
         {
-            if (Server.ToggleLog) Console.WriteLine(message);
+            if (Server.ToggleLog) Server.Log(message);
             if (WebSocket.State != WebSocketState.Open) return;
             var arr = Encoding.UTF8.GetBytes(message);
 

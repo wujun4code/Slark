@@ -18,7 +18,7 @@ namespace TheMessage
 
         public AVUser User { get; set; }
 
-        public Task<TMJsonResponse> SendAsync(TMJsonRequest request)
+        public Task<TMJsonResponse> SendAsync(TMJsonRequest request, bool ignoreAck = false, int timeLimitForDefaultResult = 3000)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace TheMessage
                 var tcs = new TaskCompletionSource<TMJsonResponse>();
                 var qId = StringRandom.RandomHexString(8);
                 json["si"] = qId;
-                tcs.SetDefaultResult(new TMJsonResponse(), 3000);
+
                 var jsonStringText = TMEncoding.Instance.Serialize(json);
 
                 EventHandler<TMJsonResponse> onResponse = null;
@@ -36,13 +36,24 @@ namespace TheMessage
                 {
                     if (response.CommandId == qId)
                     {
-                        tcs.SetResult(response);
-                        OnResponse -= onResponse;
+                        if (!ignoreAck || response.Results != null)
+                        {
+                            OnResponse -= onResponse;
+                            if (tcs.Task.IsCanceled || tcs.Task.IsCompleted)
+                            {
+                                return;
+                            }
+                            tcs.SetResult(response);
+                        }
                     }
                 };
 
                 this.SendAsync(jsonStringText).Wait();
                 OnResponse += onResponse;
+                tcs.SetDefaultResult(new TMJsonResponse(), timeLimitForDefaultResult, () =>
+                {
+                    OnResponse -= onResponse;
+                });
                 return tcs.Task;
             }
             catch (TaskCanceledException tce)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LeanCloud;
 
 namespace TheMessage
 {
@@ -26,11 +27,36 @@ namespace TheMessage
         public string Description { get; internal set; }
     }
 
-    public abstract class TMCharacter
+    [AVClassName("TMCharacter")]
+    public class TMCharacter : AVObject
     {
         public ITMSecretMission Mission { get; set; }
 
-        public abstract string ScreenName { get; set; }
+        [AVFieldName("screenName")]
+        public string ScreenName 
+        { 
+            get
+            {
+                return this.GetProperty<string>();
+            }
+            set
+            {
+                this.SetProperty<string>(value);
+            }
+        }
+
+        [AVFieldName("serial")]
+        public string Serial
+        {
+            get
+            {
+                return this.GetProperty<string>();
+            }
+            set
+            {
+                this.SetProperty<string>(value);
+            }
+        }
 
         public virtual bool IfWon(TMIntelligence receiving, IEnumerable<TMIntelligence> received, TMPlayer dying, TMPlayer winning)
         {
@@ -38,7 +64,5 @@ namespace TheMessage
         }
 
         public virtual IEnumerable<TMSpell> Spells { get; set; }
-
-        public byte ID { get; set; }
     }
 }

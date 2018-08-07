@@ -14,29 +14,6 @@ namespace TheMessage
             SetupPlugins();
         }
 
-        public static async Task<IDictionary<string, object>> RpcAsync(this TMClient @this, string methodName, params object[] args)
-        {
-            var rpcRequest = new TMJsonRequest();
-
-            var encodedArgs = new List<object>();
-
-            foreach (var a in args)
-            {
-                var ea = TMEncoding.Instance.Encode(a);
-                encodedArgs.Add(ea);
-            }
-
-            Dictionary<string, object> body = new Dictionary<string, object>()
-            {
-                { "args", encodedArgs},
-            };
-
-            rpcRequest.Url = string.Format("/rpc/{0}", methodName);
-            rpcRequest.Body = body;
-            var json = await @this.SendAsync(rpcRequest);
-            var result = json.Results;
-            return result;
-        }
 
         public static void SetupPlugins()
         {

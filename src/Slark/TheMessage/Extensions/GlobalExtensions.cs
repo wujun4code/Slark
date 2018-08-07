@@ -22,7 +22,7 @@ namespace TheMessage
             }, false);
         }
 
-        public static void SetDefaultResult<T>(this TaskCompletionSource<T> tcs, T result, int miliseconds = 5000)
+        public static void SetDefaultResult<T>(this TaskCompletionSource<T> tcs, T result, int miliseconds = 5000, Action clean = null)
         {
             var ct = new CancellationTokenSource(miliseconds);
             ct.Token.Register(() =>

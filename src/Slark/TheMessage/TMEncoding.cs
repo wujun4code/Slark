@@ -5,6 +5,7 @@ using System.Linq;
 using LeanCloud;
 using LeanCloud.Core.Internal;
 using LeanCloud.Storage.Internal;
+using LeanCloud.Utilities;
 
 namespace TheMessage
 {
@@ -46,6 +47,26 @@ namespace TheMessage
             {
                 return EncodeParseObject(av, false);
             }
+            var list = Conversion.As<IList<object>>(obj);
+            if (list != null)
+            {
+                var newArray = new List<object>();
+                // We need to explicitly cast `list` to `List<object>` rather than
+                // `IList<object>` because IL2CPP is stricter than the usual Unity AOT compiler pipeline.
+                if (list.GetType().IsArray)
+                {
+                    list = new List<object>(list);
+                }
+                foreach (var item in list)
+                {
+                    if (!IsValidType(item))
+                    {
+                        throw new ArgumentException("Invalid type for value in an array");
+                    }
+                    newArray.Add(Encode(item));
+                }
+                return newArray;
+            }
             if (AVEncoder.IsValidType(obj))
             {
                 return base.Encode(obj);
@@ -58,6 +79,11 @@ namespace TheMessage
             return Json.Parse(json);
         }
 
+        public object EncodeProperty(object value)
+        {
+            return base.Encode(value);
+        }
+
         public IDictionary<string, object> EncodeParseObject(AVObject value, bool isPointer)
         {
             if (isPointer)
@@ -67,7 +93,7 @@ namespace TheMessage
 
             var operations = value.GetCurrentOperations();
             var operationJSON = AVObject.ToJSONObjectForSaving(operations);
-            var objectJSON = value.ToDictionary(kvp => kvp.Key, kvp => TMEncoding.Instance.Encode(kvp.Value));
+            var objectJSON = value.ToDictionary(kvp => kvp.Key, kvp => EncodeProperty(kvp.Value));
             foreach (var kvp in operationJSON)
             {
                 objectJSON[kvp.Key] = kvp.Value;

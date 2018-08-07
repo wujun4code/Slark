@@ -88,7 +88,7 @@ namespace Slark.Server.WebSoket
                                     {
                                         var request = context.Request;
                                         string log = $"{request.Method} {request.Scheme}://{request.Host}{request.Path} {message}";
-                                        Console.WriteLine(log);
+                                        Log(log);
                                     }
 
                                     await OnReceived(connection, message);
@@ -189,8 +189,13 @@ namespace Slark.Server.WebSoket
 
         public override void RemoveConnectionSync(SlarkClientConnection connection)
         {
-            if (ToggleLog) Console.WriteLine($"connection disconnected with id:{connection.Id}");
+            if (ToggleLog) Log($"connection disconnected with id:{connection.Id}");
             this.DecoratedServer.RemoveConnectionSync(connection);
+        }
+
+        public void Log(string message)
+        {
+            Console.WriteLine($"{DateTime.Now.ToString("hh:mm:ss")}: {message}");
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace TheMessage
 {
+    
     public class TMSpell
     {
         public string Name { get; set; }

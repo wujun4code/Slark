@@ -7,16 +7,67 @@ using TheMessage.Extensions;
 namespace TheMessage
 {
     [AVClassName("TMPlayer")]
-    public class TMPlayer : AVObject
+    public class TMPlayer : AVObject, IRpc
     {
         public TMPlayer()
         {
 
         }
 
-        public TMPlayer(ClientInfoInRoom clientInfoInRoom)
+        public TMPlayer(TMClientInfoInRoom clientInfoInRoom) : this()
         {
             Client = clientInfoInRoom.Client;
+            RoleId = clientInfoInRoom.SeatIndex;
+            User = clientInfoInRoom.Client.User;
+        }
+
+        [RpcHostIdProperty]
+        public string Id
+        {
+            get
+            {
+                return this.ObjectId;
+            }
+        }
+
+        [AVFieldName("roleId")]
+        public int RoleId
+        {
+            get
+            {
+                return this.GetProperty<int>("RoleId");
+            }
+            set
+            {
+                this.SetProperty<int>(value, "RoleId");
+            }
+        }
+
+        [AVFieldName("user")]
+        public AVUser User
+        {
+            get
+            {
+                return this.GetProperty<AVUser>("User");
+            }
+            set
+            {
+                this.SetProperty<AVUser>(value, "User");
+            }
+        }
+
+
+        [AVFieldName("game")]
+        public TMGame Game
+        {
+            get
+            {
+                return this.GetProperty<TMGame>("Game");
+            }
+            set
+            {
+                this.SetProperty<TMGame>(value, "Game");
+            }
         }
 
         public enum TMGameState
@@ -29,8 +80,6 @@ namespace TheMessage
         }
 
         public TMClient Client { get; set; }
-
-        public TMGame Game { get; set; }
 
         public TMCharacter Charater { get; set; }
 

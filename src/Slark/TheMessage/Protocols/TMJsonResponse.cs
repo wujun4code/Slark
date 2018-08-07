@@ -18,6 +18,12 @@ namespace TheMessage
             MetaText = message;
         }
 
+        public TMJsonResponse(string message, string cmdId)
+            : this(message)
+        {
+            CommandId = cmdId;
+        }
+
         public TMJsonResponse(string message, IDictionary<string, object> results, string cmdId)
             : this(message)
         {

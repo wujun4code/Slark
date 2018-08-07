@@ -13,5 +13,11 @@ namespace TheMessage.Extensions
             var sendTasks = @this.ClientInfos.Select(info => info.Client.RpcAsync(rpcMethodName, args));
             return Task.WhenAll(sendTasks);
         }
+
+        public static Task RpcClientAsync(this TMRoom @this, TMClient client, string methodName, params object[] args)
+        {
+            var rpcMethodName = $"TMRoom_{@this.Id}_{methodName}";
+            return client.RpcAsync(rpcMethodName, args);
+        }
     }
 }
